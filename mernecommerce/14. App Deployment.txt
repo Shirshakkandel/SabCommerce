@@ -25,15 +25,16 @@ build static assests for react and then have backend load that index
 npm run build in server.
 
 Heroku
-brew sh 
+brew sh  download window installer
 New =>
-
+# heruko from cli
 heruko login 
 heruko create proshopapp
 
-/Procfile
+/Procfile   => tell heroku what to run 
 web: node backend/server.js
 
+to run npm i npm run build in frontend
 package.json
 "script":{
     "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
@@ -50,7 +51,8 @@ Application error
 
 heruko logs errors cause we donot have .env
 
-Setting/config vars
+
+# Setting/config vars
 NODE_ENV production
 MONGO_URI 
 
