@@ -1,0 +1,277 @@
+            1)Admin middleWare and Get Users EndPoints    
+Postman=> Users & Auth > Get /api/users(Get all users, Admin only)
+{{URL}}/api/users
+
+backend/userControllers
+
+//@desc Get all users
+//@route Get /api/users
+//@acess Private/Admin
+
+const getUsers= asyncHandler(async(req,res)=> {
+    const users= await User.find({})
+    res.json(users)
+})
+
+export {authUser, registerUser,getUserProfile,updateUserProfile,getUsers}
+
+route/userRoutes.js
+router.route('/').post(registerUser).get(protect,getUsers)
+
+middleWare/authMiddleware.js
+const admin=(req,res,next)=> {
+    if(req.user && req.user.isAdmin){
+        next()
+        else {
+            res.status(401)
+            throw new Error('Not authorized as an admin')
+        }
+    }
+}
+
+route/userRoutes.js
+router.route('/').post(registerUser).get(protect,admin,getUsers)
+
+
+        2)Admin User List     
+reducer/userReducer.js
+export const userListReducer=(state={users:[]},action)=> {
+    switch(action.type){
+        case USER_LIST_SUCCESS:
+        return {loading:false,users:action.payload}
+        default:
+        return state
+    }
+}
+
+user/userAction.js
+export const listUsers=()=> async(dispatch,getState)=> {
+    const {data} = await axios.get('/api/users',config)
+    dispatch({type:USER_LIST_SUCCESS,payload:data})
+}
+
+screen/userListScreen.js
+
+const UserListScreen=()=> {
+    const userList = useSelector(state=> state.userList)
+    const {loading,error,users}= userList
+    useEffect(()=> {
+        dispatch(listUsers())
+    },[dispatch])
+
+    return(
+        <Table striped bordered hover responsive className="table-sm">
+
+        </Table>
+
+    )}
+
+            3)Admin Screen Access Security  
+
+redirect back to homeScreen
+screen/userListScreen.js
+
+const UserListScreen=({history})=> {
+    const userLogin= useSelector(state=> state.userLogin)
+    const {userInfo}= userLogin
+
+    useEffect(()=> {
+        if(userInfo && userInfo.isAdmin){
+            dispatch(listUsers())
+        }else {
+            history.push('/')
+        }
+    },[dispatch,history])
+}
+
+reducer/userReducer.js
+export const userListReducer= (state={user:[]}, action)=> {}
+
+action/userAction.js
+
+            4)Admin User Delete     
+controller/userControllers.js
+
+//@desc delete user
+//@route DELETE /api/users/:id
+//@access Private/Admin
+const deleteUser= asyncHandler(async(req,res)=> {
+    const user= await user.findById(req.params.id)
+    if(users){
+        await user.remove()
+        res.json({message:'User remove'})
+    }else {
+        res.status(404)
+        throw new Error('User not Found')
+    }
+})
+
+//routes/userRoutes.js
+router.route('/:id').delete(protect,admin,deleteUser)
+
+            UserListScreen.js
+const userDelete= useSelector(state=> state.userDelete)
+const {success:sucessDelete}= userDelete
+
+const deleteHandler= (id)=> {
+    if(window.confirm('Are you sure')){
+      dispatch(deleteUser(id))
+    }}
+
+  
+            5)Get User by Id and Udpate User Endpoint  
+@route GET /api/users/:id
+
+const getUserId= asyncHandler(async(req,res)=> {
+    const user= await User.findById(req.params.id).select('-password')
+    if(user){
+     res.json(user)
+    }else {
+        res.status(404)
+        throw new Error('user not found')
+    }})
+
+
+            7)Update user functionality  
+
+useEffect(()=> {
+    if(sucessUpdate){
+        dispatch({type:USER_UPDATE_RESET})
+        history.push('/admin/userlist')
+    }else {
+        if(!user.name || user._id ==userid){
+            dispatch(getUserDetails(userId))
+        }
+    }
+})
+
+
+
+            Admin dashboard 7)Image upload config & Endpoint   
+multer package(upload file package) and amazon s3
+in endpoints api/uploads
+multer.diskStorage function take object which have destination and filename
+take object with two function destination and filename
+backend npm i multer
+uploads folder => 
+
+
+routes/uploadRoutes.js
+
+import express from 'express' import multer from 'multer'
+import path from 'path'
+const router= express.Router()
+
+const storage= multer.diskStorage({
+    destination(req,file,cb){
+        cb(null,'uploads/')
+    },
+    filename(req,file,cb){
+        # cb(null,`${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
+    }
+})
+
+function checkFileType(file,cb){
+    const filetypes=/jpg|jpeg|png/
+    const extname=filetypes.test(path.extname(file.originalname).toLowerCase())
+    const mimetype=filetypes.test(file.minetype)
+ 
+    if both true then send true
+    if(extname && mimetype) {
+        return cb(null,true)
+    }else {
+        cb('Images only!')
+    }}
+
+const upload= multer({storage,
+fileFilter:function(req,file,cb)
+{checkFileType(file,cb)}
+})
+
+
+routes/uploadRoutes.js
+router.post('/', upload.single('image'),(req,res)=> {
+    res.send(`${req.file.path}`)})
+
+//server.js
+
+api.use('/api/uploads',uploadRoutes)
+//make static folder so it can be loaded in browser
+const __dirname= path.resolve()
+app.use('/uploads', express.static(path.join(__dirname,'/uploads')))
+
+
+            8)Frontend Image Upload  
+screen/ProductScreen.js
+const [uploading,setUploading]= useState(false)
+const uploadFileHandler=async(e)=> {
+    const file=e.target.files[0]
+    const formData= new Formdata()
+    formData.append('image', file)
+    setUploading(true)
+
+    try{
+        const config= {headers:{'Content-Type': 'multipart/form-data'}}
+        const {data} = await axios.post('/api/upload', formData, config)
+        setImage(data)
+        setUploading(false)
+    }catch(error){
+        console.log(error)
+        setUploading(false)
+    }
+   
+}
+<Form.File id="image-file" label="Choose File" custom onChange={uploadFileHandler}>
+</Form.File>
+
+                    10)Mark Order As Delivered     
+controller/orderController.js
+
+//@desc Update order to Delivered
+//@route Get api/order/:id/Delivered
+//@access Private/ admin
+
+const updateOrderToDelivered= asyncHandler(async(req,res)=> {
+    const order= await Order.findById(req.params.id)
+
+    if(order) {
+        order.isDelivered= true
+        order.deliverdAt= Date.now()
+        const UpdatedOrder= await order.save()
+        res.json(updateOrder)
+    }else {
+        res.status(404)
+        throw new Error('Order not found')
+    }
+})
+
+order/orderRoutes.js
+router.route('/:id/deliver').put(protect,admin,updateOrderToDelivered)
+
+
+frontend action/orderActions.js
+
+const {data} = await axios.put('/api/orders/${orderId}/deliver',{},config)
+const config= {headers:{Authorization:'Bearer ${userInfo.token'}}
+
+Screen/OrderScreen.js
+
+const OrderScreen= ()=>{
+    const orderDeliver= useSelector(state=> state.orderDeliver)
+    const {loading:loadingDeliver, sucess:sucessDeliver} = orderDeliver
+    const deliverHandler= ()=> {dispatch(deliverOrder(order))}
+
+    return(
+        {userInfo.isAdmin && order.isPaid && !order.isDelivered &&(
+            <ListGroup.Item>
+            <Button onClick={deliverHandler}>Mark as Delivered</Button>
+            </ListGroup.Item>
+        )}
+    )
+}
+
+ 
+
+
+
+

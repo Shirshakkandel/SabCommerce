@@ -1,0 +1,211 @@
+
+        #   1)Get Order by Id Endpoint    
+
+controller/orderController.js
+
+//desc Get order by Id
+//@route Get /api/orders/:id
+//@access Private
+
+const getOrderById = asyncHandler(async(req,res)=> {
+    const order= await Order.findById(req.param.id).populate('user', 'name email')
+    if(order){ res.json(order)}
+    else{
+        res.status(404)
+        throw new Error('Order not Found')
+    }
+})
+
+postman
+new folder>(name:order and desc:) > request name > {{URl}}/api/orders/id
+
+routes/orderRoutes.js
+
+router.route('/',post(protect,addOrderItems))
+route.route('/:id',get(protect,getOrderById))
+
+        # 2)Order Details and Actions  
+
+export const orderDetailsReducer=(state={ loading:true, orderItem:[], shippingAddress:{}}, action)=> {
+    switch(action.type){
+        case ORDER_DETAILS_SUCCESS:
+        return {loading:false, order:action.payload}
+
+        case ORDER_DETAILS_FAIL:
+        return{loading:false,error:action.payload}
+
+        default:
+        return state
+    }}
+
+//store.js
+const combineReducer={orderDetail:orderDetailsReducer}
+
+//action/orderAction.js
+
+# export const getOrderDetails= (id)=> async(dispatch,getState)=> {
+    
+#     const {userLogin:{userInfo}}= getState()
+#     const config={headers:{ Authorization:`Bearer ${userInfo.token}`}}
+#     const {data}= await axios.get(`/api/orders/{id}`,config)
+
+# }
+
+
+             3)OrderScreen.js   
+import {Button,Row,Col,ListGroup,Image,Card} from 'react-bootstrap'
+import {getOrderDetails} from '../actions/orderActions'
+# const OrderScreen =({match})=> {
+#     const orderId= match.params.id
+#     const orderDetails = useSelector(state=> state.orderDetails)
+#     const {order,loading,error} = orderDetails
+
+#     useEffect(()=> {
+#         dispatch(getOrderDetails(orderId))
+        <a href={`mailto:${order.user.email}`}>{order.user.email}</a>
+        
+#     },[])
+    
+# }
+
+            # 4)Update To EndPoints  
+
+
+# controller/orderController.js
+
+//@desc Update order to paid
+//@route GET/api/orders/:id/pay
+//@access Private
+
+const updateOrderToPaid= asyncHandler(async(req,res)=> [
+    const order= await Order.findById(req.params.id)
+    if(order){
+        order.isPaid= true
+        order.paidAt= Data.now()
+        # order.payment will come from paypal  
+        order.paymentResult= {
+            id:req.body.id,
+            status:req.body.status,
+            update_time:req.body.update_time,
+            email_address= req.body.payer.email_address
+        }
+        const updateOrder= await order.save()
+        res.json(updateOrder)
+
+    }else {
+        res.status(404)
+        throw new Error('Order not Found')
+    }
+])
+
+export {addOrderItems, getOrderById, updateOrderToPaid}
+
+route/orderRoutes.js
+
+router.route('/:id/pay').put(protect, updateOrderToPaid)
+
+
+            5)Order pay Reducer and action   
+reducer/orderReducer.js
+export const orderPayReducer = (state={}, action)=> {
+    switch(action.type) {
+        case ORDER_PAY_SUCCESS:
+        return {loading:false, success:true}
+
+        case ORDER_PAY_RESET:
+        return {}
+
+    }
+}
+
+//store.js
+const combineReducer={orderPay:orderPayReducer}
+
+action/orderPayAction.js
+
+export const payOrder= (orderId, paymentResult)=> async(dispatch, getState)=> {
+    const {userLogin: {userInfo}} = getState()
+
+    # const config= {headers:{"CONTENT_TYPE":"application/json", Authorization:`Bearer ${userInfo.token}`}}
+
+    #  const {data} = await axios.put(`/api/orders/${orderId}/pay`, paymentResult, config))
+}
+
+
+                # 6)Adding paypal Payments  
+developer paypal >> SANDBOX(ACCOUNT) >>Business and personal
+
+Dashboard> My App and Credentials >> Sanbox(**)+Live >>App name(proshop) >>create App and get Client Id
+
+.env
+PAYPAL_CLIENT_ID = aJFLAFJL;JDF;LKSDJFL;SDFJ
+
+//server.js
+app.get('/api/config/paypal', (req,res)=> res.send(process.env.PAYPAL_CLIENT_ID))
+
+
+# screen/orderScreen.js
+import {PaypalButton} from 'react-paypal-button-v2'
+import {getOrderDetails,payOrder} from '../actions/orderActions'
+const OrderScreen=({match})=>{}
+const [sdkReady, setSdkReady] = useState(false)
+
+const orderDetails = useSelector(state=> state.orderDetails)
+const {order,loading,error}= orderDetails
+
+const orderPay= useSelector(state=> state.orderPay)
+const {loading:loadingPay,success:successPay}= orderPay
+# paypal order script
+useEffect(()=> {
+    const addPaypalScript= async()=> {
+      
+        const {data:clientId} =await axios.get('/api/config/paypal')
+        #   console.log(clientId) 
+        const script =document.createElement('script')
+        script.type="text/javascipt"
+        script.src= "https://www.paypal.com/sdk/js?client-id=${clientId}"
+        script.async= true
+        script.onload= ()=> {setSdkReady(true)}
+        document.body.appendChild(script)
+    }
+
+   if(!order || successPay) { 
+       dispatch(getOrderDetails(orderId))
+   }else if(!order.isPaid){
+       if(!window.paypal){
+           addPaypalScript()
+       }else {
+           setSdkReady(true)
+       }
+   }
+},[dispatch,orderId,successPay,order])
+
+const successPaymentHandler = (paymentResult) => {
+    console.log(paymentResult)
+    dispatch(payOrder(orderId, paymentResult))
+
+}
+return (
+    <ListGroup.Item>
+    {!order.isPaid && (
+        <ListGroup.Item>
+        {loadinPay && <Loader>}
+        {!sdkReady ? (<Loader/>):(<PaypalButton amount={order.totalPrice} onSuccess={sucessPaymentHandler/>)}
+        </ListGroup.Item>
+    )}
+    </ListGroup.Item>
+)
+
+        7)Show Order on Profile  
+controller/orderController.js
+const updateOrderToPaid= asyncHandler(async(req,res)=> {
+    const orders=await Order.find({user:req.user._id})
+    res.json(orders)})
+
+export const listMyOrders= ()=> async(dispatch, getState)=> {
+    
+}
+
+
+
+

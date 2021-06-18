@@ -1,0 +1,36 @@
+@media only screen and (min-width: 1024px) {
+  #sidebar {
+    height: calc(100vh - 64px);
+  }
+}
+
+.rotate-up {
+  transform: rotate(0);
+}
+.rotate-down {
+  transform: rotate(90deg);
+}
+.rotate-up.animate {
+  animation: rotate-up 0.3s ease;
+}
+.rotate-down.animate {
+  animation: rotate-down 0.3s ease;
+}
+
+@keyframes rotate-down {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes rotate-up {
+  from {
+    transform: rotate(90deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}

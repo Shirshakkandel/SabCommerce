@@ -1,0 +1,221 @@
+                # 1)User login reducer and action  
+
+#  constant/userConstant.js
+export const USER_LOGIN_REQUEST="USER_LOGIN_REQUEST"
+
+#  reducer/userReducer.js
+export const userLoginReducer= (state={}, action)=> {
+    switch(action.type){
+        case USER_LOGIN_REQUEST:
+        return {loading:true}
+
+        case USER_LOGIN_SUCCESS:
+        return {loading:false, userInfo:action.payload}
+
+        case USER_LOGIN_FAIL:
+        return {loading:false , error:action.payload}
+
+        case USER_LOGOUT:
+        return {}
+        default: 
+        return {}
+    }
+}
+
+#  /store.js
+const reducer= combineReducers({
+    userLogin:userLoginReducer,
+})
+const userInfoFromStorage= localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
+const intialState = {
+    cart:{cartItems:cartItemsFormStorage}
+    userLogin:{userInfo:userInfoFromStorage} }
+
+
+     # action/userAction.js
+export login=(email,password)=>async(dispatch)=> {
+    try{
+    dispatch({type:"USER_LOGIN_REQUEST"})
+    const config={headers:{'Content-Type':"application/json"}}
+    const {data}=await axios.post('api/users/login',{email,password},config)
+
+    dispatch({type:"USER_LOGIN_SUCCESS", payload:data})
+    localStorage.setItems('userInfo',JSON.stringfy(data))
+
+    }catch(error){}}
+
+
+
+
+            # 2)User Login Screen and functionality 
+            
+            
+  # screen/LoginScreen.js
+import {Link} from 'react-router-dom'
+import {Form,Button,Row, Col} from 'react-bootstrap'
+import {useDispatch,useSelector} from 'react-redux'
+import {login} from '../actions/userActions'
+
+const LoginScreen({location,history})=> {
+    const redirect= location.search ? location.search.split("=")[1]:'/'
+ 
+    useEffect(()=> {
+    if(userInfo){
+        history.push(redirect)
+    }
+  }, [history, userInfo,redirect])
+
+  return(
+<FormContainer>
+ <h1>Sign In</h1>
+    <Form onSubmit={submitHandler}>
+    <Form.Group controlId="email">
+    <Form.Label>Email Address</Form.Label>
+    <Form.Control type="email" placeholder="Enter email" value={email} onChange={e=> setEmail(e.target.value)}></Form.Control>
+    </Form.Group>
+    </Form.Group>
+ <Row className="py-3">
+  <Col>
+  New Customer ?
+  <Link to={redirect ? `register?redirect=${redirect}`: '/register'}>Register</Link>
+  </Col>
+  </Row>
+  <FormContainer>
+  )}
+
+
+                # 3)Show User in Navbar and logout  
+
+# components/header.js
+import {LinkContainer} from 'react-router-bootstrap'
+import {Navbar,Nav,Container, NavDropDown} from 'react-bootstrap'
+const Header=()=> {
+    const userLogin= useSelector(state=> state.userLogin)
+    const {loading,error, userInfo}=userLogin
+
+    const logoutHandler= ()=> {
+        dispatch(logout())
+    }
+    #App.js ==> <Route path="/login" componet={LoginScreen}>
+    return(
+        {userInfo ? (<NavDropDown>
+            <LinkContainer to="/profile">
+            <NavDropDown.Item>Profile</NavDropDown.Item>
+            </LinkContainer>
+            <NavDropDown.Item onClick={logoutHandler}>Logout</NavDropDown.Item>
+            </NavDropDown>)}
+
+    )
+}
+
+# action/userAction.js
+export const logout= ()=> (dispatch)=> {
+    localStorage.removeItem('userInfo')
+    dispatch({type:USER_LOGOUT})
+}
+
+                    # 4)User Register reducer, action,screen 
+
+login user after register 
+export const register=()=> async(dispatch)=> {
+    dispatch({type:"USER_REGISTER_SUCCESS"},payload:data)
+    dispatch({type:"USER_LOGIN_SUCCESS", payload:data})
+    localStorage.setItems('userInfo', JSON.stringfy(data))
+}
+
+screen/RegisterScreen.js
+
+const submitHandler= (e)=> {
+    e.preventDefault()
+    if(password !== confirmPassword){
+        setMessage("Password do not match")
+    }
+    dispatch(register(name,email,password))
+}
+
+
+            # 6)Profile Screen and get User Details  and update user profile 
+
+# reducer/userReducer.js
+
+export const userDetailsReducer= (state={user:{}}, action)=> {
+    switch(action.type){
+        case USER_DETAILS_REQUEST:
+        return {...state,loading:true}
+
+        case USER_DETAILS_SUCCESS:
+        return {loading:false,user:action.payload}
+    }
+}
+
+# //store.js
+const combineReducers= combineReducers({userDetails:userDetailsReducer})
+
+    # actions/userActions.js
+const getUserDetails=(id)=> async(dispatch,getState)=> {
+    try{ 
+        const {userLogin: {userInfo}}= getState()
+        # config:{headers:{Authorization:`Bearer ${userInfo.token}`}},
+        const {data}= await axios.get(`/api/users/${id}`,config)
+    }
+    catch(error){dispatch({type:USER_LOGIN_FAIL, payload:error.response && error.response.data.message ? error.response.data.message : error.message})}
+    
+}
+
+
+   # screen/profileScreen.js
+export const ProfileScreen= ({location,history})=> {
+
+    const userDetails= useSelector(state=> state.userDetails)
+    const {loading,error,user}= userDetails
+
+    const userLogin = useSelector(state=> state.userLogin)
+    const {userInfo}= userLogin 
+
+    useEffect(()=> {
+        if(!userInfo){
+            history.push('/login')
+        } else {
+           if(!user){
+               //it hit api/users/profile
+               dispatch(getUserDetails('profile'))
+           } 
+        }else { 
+            setName(user.name)
+            setEmail(user.email)
+        }
+    },[dispatch,history,userInfo,user])
+
+    const submitHandler= (e)=> {
+        e.preventDefault()
+        if(password !== confirmPassword){
+            setMessage('Password do not match')
+        }else {
+            dispatch(updateUserProfile({id:user._id, name,email,password})) //pass as a object
+        }
+    }
+
+    return (
+        <div> 
+        </div>
+    )
+}
+
+            # 7)Upadate User Profile  
+
+            
+export default ProfileScreen
+//user get entire user object
+export const updateUserProfile= (user)=> async(dispatch, getState)=> {
+    try{
+    dispatch({type:"USER_UPDATE_PROFILE_REQUEST"})
+    const {userLogin:{userInfo}}= getState()
+    const config= {headers:{'Content-Type':"application/json", Authorization:`Bearer ${userInfo.token`}}
+    const {data}= await axios.put(`/api/users/profile`, user, config)
+
+    dispatch({type:USER_LOGIN_SUCCESS, payload:data,})
+    localStorage.setItems('userInfo', JSON.stringfy(data))
+    
+    }catch(error){}
+}
+

@@ -1,0 +1,242 @@
+                # 1)Shipping Screen and Save Address
+
+import {Form,Button} from 'react-bootstrap'
+
+export const Shipping=({history})=> {
+    const cart =useSelector(state=> state.cart)
+    const {shippingAddress} = cart
+
+    function submitHandler(e){
+        e.preventDefault()
+        dispatch(saveShippingAddress({address,city,postalCode,country}
+        history.push('/payment')
+    }
+
+    return (
+        <FormContainer>
+        <CheckoutSteps step1 step2>
+        <h1>Shipping</h1>
+        <Form onSubmit={submitHandler}></Form>
+        </FormContainer>
+    )
+}
+
+action/cartAction.js
+
+export const saveShippingAddress=(data)=>(dispatch)=>{
+    dispatch({type:"CART_SAVE_SHIPPING_ADDRESS",payload:data})
+    localStorage.setItems('shippingAddress', JSON.stringify(data))
+}
+
+reducer/cartreducer.js
+
+export const cartReducer=(state={cartItems:[],shippingAddress:{}},action)=>{
+case CART_SAVE_SHIPPING_ADDRESS:
+return {
+    ...state,
+    shippingAddress:acion.payload
+}}
+
+
+//store.js
+const shippingAddressFromStorage = localStorage.getItems('shippingAddress') ? JSON.parse(localStorage.getItems('shippingAddress')):{};
+const initialState= {cart : cartItem:cartItemsFromStorage, shippingAddress:shippingAddressFromStorage}
+
+
+                # 2)Checkout step Components
+
+export const CheckoutSteps=({step1,step2,step3,step4})=> {
+    # Sign In , Shipping, Payment, Place Order
+    return (
+        <Nav>
+        <Nav.Item>
+        {step1 ? (
+            <LinkContainer to="/shipping"><Nav.Link>Sign In</Nav.Link></LinkContainer>
+        ):(
+            <Nav.Link disable>Sign In </Nav.Link>
+        )}
+        </Nav.Item>
+        </Nav>
+
+    )}
+
+            # 3)Payment Screen and Save paymenet Method
+
+#  screen/PaymentScreen.js
+import {Form , Button, Col} from 'react-bootstrap'
+import FormContainer from '../components/FormContainer'
+import CheckoutSteps from '../components/CheckoutSteps'
+import {savePaymentMethod} from '../actions/cartActions'
+
+const PaymentScreen= ({})=> {
+    const cart = useSelector(state=>state.cart)
+    const {shippingAddress} = cart
+    const [paymentMethod,setPaymentMethod]= useState('Paypal')
+
+    if(!shippingAddress){
+        history.push('shipping')
+    }
+
+    const submitHandler= (e)=> {
+        e.preventDefault()
+        dispatch(savePaymentMethod(paymentMethod))
+        history.push('/placeorder')
+    }
+
+    return(
+     <CheckoutSteps step1 step2 step3/>
+     <h1>Payment method</h1>
+     <Form onSubmit={submitHandler}>
+     </Form>
+
+    )
+}
+
+# action/cartAction
+export const savePaymentMethod=(data)=> (dispatch)=> {
+    dispatch({
+        type:CART_SAVE_PAYMENT_METHOD,
+        payload:data,
+    })
+    localStorage.setItems('shippingAddress', JSON.stringify(data))
+}
+
+reducer/cartReducer
+const combineReducer= {
+    cart:cartReducer,
+}
+
+const CartReducer=(state={cartItems:[], shippingAddress:{}}, action)=> {
+    switch(action.type){
+        case CART_SAVE_PAYMENT_METHOD:
+        return {
+            ...state,
+            paymentMethod:action.payload,
+        }
+    }}}
+
+
+                    #   4)Place Order Screen
+
+screen/PlaceOrderScreen.js
+
+import {Button,Row,Col,ListGroup,Image, Card} from 'react-bootstrap'
+
+export default const PlaceOrderScreen=()=> {
+    const cart= useSelector(state=> state.cart)
+    const addDecimals= (num)=> {
+            return (Math.round(num*100)/100).toFixed(2)
+        }
+
+       //Calculate Price
+        cart.itemPrice= cart.cartItems.reduce((acc,item)=> acc+ item.price*item.qty , 0)
+        cart.shippingPrice=cart.ItemsPrice > 100 ? 0:100
+        cart.taxtPrice=addDecimals(Number((.15*cart.itemsprice).toFixed(2))
+        cart.totalPrice=(Number(cart.itemsPrice)+Number(cart.shippingPrice)+Number(cart.taxtPrice)).toFixed(2)
+
+
+    return (
+        <>
+        <CheckoutSteps step1 step2 step3 step4 />
+        <ListGroup variant="flush">
+        {cart.cartItem.map((item,index)=> (
+            <ListGroup.Item key={index}>
+            <Row>
+            <Col> <Image src={item.image} alt={item.name} fluid rounded /></Col>
+            </Row>
+            </ListGroup.Item>
+        ))}
+        </ListGroup>
+        </>
+    )}
+
+
+
+                # 5)Order Controller and Route (Backend) with protect autMiddleware
+
+backend/controller/orderController.js
+import asyncHandler from 'express-async-handler'
+import Order from '../models/orderModel.js'
+
+//@desc Create new order
+//@route POST /api/orders
+//@access Private
+
+const addOrderItems= asyncHandler(async(req,res)=> {
+    const {orderItems,shippingAddress,paymentMethod,itemsPrice,taxtPrice,shippingPrice,totalPrice}= req.body
+    if(orderItems && orderItems.length ===0){
+        res.status(400)
+        throw new Error('No order items')
+    }else {
+        # this is protected route so we get req.user
+        const order = new Order({orderItems,user:req.user._id,shippingAddress,paymentMethod,itemsPrice,shippingPrice,totalPrice})
+        const createOrder= await order.save()
+        res.status(201).json(createdOrder)
+    }})
+
+ # routes/orderRoutes.js
+
+const router = express.Router()
+import {protect} from '../middleware/authMiddleware.js'
+import {addOrderItems} from '../controllers/orderController.js'
+router.route('/').post(protect,addOrderItems)
+export default router
+
+server.js
+api.use('/api/orders',orderRoutes)
+
+             # 6)Create Order
+
+export const ORDER_CREATE_REQUEST="ORDER_CREATE_REQUEST"
+
+reducer/orderReducer.js
+export const orderCreateReducer=(state={},action)=> {
+    case ORDER_CREATE_REQUEST:
+    return {loading:true}
+
+    case ORDER_CREATE_SUCCESS:
+    return{loading:false,sucess:true, order:action.payload}
+
+    case ORDER_CREATE_FAIL:
+    return {loading:false,error:action.payload}
+
+    default:
+    return {}
+}
+
+#  action/orderAction.js
+
+export const createOrder=(order)=> async(dispatch,getState)=> {
+    # try{
+    #     const {userLogin:{userInfo}}= getState()
+    #     const config={headers:{"Content-Type":'application/json', Authorization:`Bearer ${userInfo.token}`}}
+    #     const {data}= await axios.post(`/api/orders`, order,config)
+
+
+                # 6)PlaceOrderScreen
+
+//screen/PlaceOrderScreen.js
+import {Button,Row,Col,ListGroup,Image,Card} from 'react-bootstrap'
+import {createOrder} from '../actions/orderActions'
+const placeOrderHandler = ()=> {
+    const orderCreate= useSelector(state=> state.orderCreate)
+    const {order,succes,error}= orderCreate
+
+    useEffect(()=> {
+        if(success){
+            history.push(`order/${order._id}`)
+        }
+        //eslint-disable-next-line  it stop complain about missing dependencies
+
+    },[history,success])
+    const {shippingAddress,paymentMethod,itemsPrice,shippingPrice,taxtPrice,totalPrice} = cart
+    dispatch(createOrder({orderItems:cart.cartItem,shippingAddress,paymentMethod,itemPrice,shippingAddress,taxtPrice,totalPrice}))
+}
+
+
+
+
+
+
+
+

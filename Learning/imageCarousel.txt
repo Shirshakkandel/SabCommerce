@@ -1,0 +1,39 @@
+components/SliderData.js
+export const SliderData=[
+     {image:"url"},{image:""}
+]
+#    App.js
+import {SliderData} from './SliderData'
+function App(){return <ImageSlider slider={SliderData}/>}
+
+#  components/ImageSlider.js
+const ImageSlider=({slides})=> {
+     const [current,setCurrent] = useState(0)
+     if(!Array.isArray(slides) || slides.length <=0){return null}
+
+     const nextSlide= ()=> {setCurrent(current===length-1 ? 0:current+1)}
+     const prevSlide=()=> {setCurrent(current===0 ? length-1 :current-1)}
+
+     <section className="slider">
+     <FaArrowAltCircleleft className="left-arrow" onClick={prevSlide}>
+     <FaArrowAltCircleRight className="right-arrow" onClick={nextSlide}> 
+     {SliderData.map((slide,index)=> {
+
+          return(
+               <div className={index === current ? 'slide active': slide} key={index}>
+               {index===current && ( <img src={slide.image} alt="travel" className="image">) }
+               </div>
+          )
+     })}
+     </section>
+     </img>
+}
+
+     #App.css
+.slider{position:relative; height:100vh; display:flex; justify-content:center; align-items:center}
+.image{widht:1000px; height:600px; border-radius:10px}
+.right-arrow{absolute;top-50%; right:32px; font-size:3rem; color:#000; z-index}
+.left-arrow{absolute; top-50%; }
+
+.slide{opacity:0 transition:duration: 1s ease}
+.slide .active {opacity:1; transition-duration:1s; tranform:scale(1.8)}

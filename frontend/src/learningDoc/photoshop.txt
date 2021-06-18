@@ -1,0 +1,7 @@
+exact height of h-80 320px
+image/image size/change height 
+images/image size/ height 320px 
+image/cavas Size/width-851
+exact not size and better way
+crop tool/top box/ w*h resolution/type exact 
+ 

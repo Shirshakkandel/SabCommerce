@@ -1,0 +1,96 @@
+                1)React SetUp And Git initialize   
+Proshop folder inside 
+npx create-react-app frontend
+delete logo.svg , app.css , 
+inside frontend
+        # git bash command not command prompt(dir) in linux ls
+ls -a(list all files and folder including hidden)
+rm -rf .git (remove git file )
+move gitignore file outside of frontend
+Proshop/gitignore
+#dependencies 
+ node_modules
+ node_modules/ (exclude node_modules in all file location)
+ #misc
+ .env
+
+ Proshop
+ git init 
+ git add .
+ git commit -m "React setup"
+
+            2)React Bootstrap Setup, Header and footer Components 
+Components/Header.js
+rafce(react arrow function export)
+npm i react-bootstrap bootstrap  only install react-bootstrap we are using flux theme from bootwatch
+
+index.js
+import './bootstrap.min.css'
+
+/App.js
+components/Header.js
+import {Navbar, Nav, Container} from 'react-bootstrap'
+const Header = ()=> {}
+        
+
+                4)Rating Components   
+                <Rating value={}  >
+
+ const Rating = ({value, text,color})=> {
+     return (
+         <div className="rating">
+         <span>
+         <i style={{color}} className={value >=1 ? 'fas fa-star' : value >=0.5 ? 'fas fa-star-half-alt': 'far fa-star'}>
+         </span>
+         <span>
+         <i className={value >=2 ? 'fas fa-star' : value >=1.5 ? 'fas fa-star-half-alt': 'far fa-star'}>
+         </span>
+         upto 5 (5 and 4.5)
+         <span></span>
+         </div>
+     )
+ }
+
+ Rating.defaultProps={color:"#f8e825"}
+ Rating.propsTypes={value:propsTypes.number.isRequired}
+
+            5)Implementing React router 
+npm i react-router-dom react-router-bootstrap
+/App.js
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+const App=()=>{
+    return (
+        <Router>
+        <Header />
+         <main className="py-3">
+         <Container>
+         <Route path="/" component={HomeScreen} exact>
+         <Route path="/product/:id" component={ProductScreen}>
+         </Container>
+         </main>
+        </Router>
+    )}
+
+components/Product.js
+import {Link} from 'react-router-dom'
+
+const Product = ({product}) => {
+    return(
+      <Link to={`/product/${product._id}`}>
+        <Card.Img src={product.image} variant='top' />
+      </Link>
+    )}
+
+components/Header.js
+import { LinkContainer } from 'react-router-bootstrap'
+     <LinkContainer to='/'>
+        <Navbar.Brand>ProShop</Navbar.Brand>
+     </LinkContainer>
+
+                6)Product Details Screen  
+screen/ProductScreen.js
+
+const ProductScreen =({match})=> {
+    const product = products.find(p=> p._id ===match.params.id)
+    
+}

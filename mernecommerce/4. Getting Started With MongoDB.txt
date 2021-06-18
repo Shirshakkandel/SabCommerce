@@ -1,0 +1,242 @@
+                    1)MongoDB Atlas and Compass SetUp   
+
+mongoDb atlas=> create cluster => 2-3 minutes so download MongoDb compass 
+Database Access => Add user 
+Networdk Access => allow Access from anywhere
+Cluster=> Collection => Add My own Data=> (database name(proshop)+collection name(products)) => create
+Connect => 
+
+.env 
+MONGO_URI = "Uri" change password and database name
+
+        2)Connecting to the Database 3.Adding Color to Console  
+        
+mongoose(object moodeling for nodejs, create model and Schema)
+npm i mongoose
+
+#   backend/config/db.js
+import mongoose from 'mongoose'
+
+const connectDB= async()=> >{
+    try{
+        const conn = await mongoose.connect(process.env.MONGO_URI,{
+            useUnifiedTopology:true,
+            useNewUrlParser:true,
+            useCreateIndex:true
+        })
+        console.log(`MongoDB Connected : ${conn.connection.host}`)
+
+    }catch(error){
+        console.log(`Error ${error.message}`)
+        process.exit(1)
+    }
+}
+
+backend/server.js
+import connectDB from './config/db.js'
+
+dotenv.config()
+connectDB()
+when run npm run server we will find MongoDb connected: shirshak......
+
+            //3)Adding color To console log
+npm i colors
+server.js
+
+           4)Modeling Our data     
+
+     backend/models/userModels.js
+import mongoose from 'mongoose'
+const userSchema = mongoose.Schema({
+    name:{type:String, required:true},
+    email:{type:String,required:true, unique:true},
+    password:{type:String,required:true,},
+    isAdmin:{type:Boolean, required:true, default:false}
+}, {
+    timestamps:true,
+})
+
+const User= mongoose.model('User', userSchema)
+export default User
+
+      backend/models/productModels.js
+const productSchema = mongoose.Schema(
+    {
+        user:{type:mongoose.Schema.Types.ObjectId, required:true, ref:"User"},
+         name: {type: String,required: true},
+         image: { type: String, required: true, },
+         brand: { type: String, required: true, },
+        category, description, reviews:[reviewSchema],rating,numReviews,price,countInStock,
+    },{timestamps:true}
+)
+
+const Product = mongoose.model('Product', productSchema)
+export default Product
+
+
+       backend/models/orderModel.js
+const orderSchema= mongoose.Schema({
+    user:{type:mongoose.Schema.Types.ObjectId, required:true,ref:'User',}
+    orderItems:[
+        { 
+            name:{type:String,required:true}
+            qty,image,price,
+            product:{
+                type:mongoose.Schema.Types.ObjectId,required:true, ref:'Product'
+            }
+        }
+    ],
+    shippingAddress:{address,city,postalCode, country},
+})
+const Order = mongoose.model('Order', orderSchema)
+export default Order
+
+                5)Preparing Sample Data  
+
+data/user.js
+npm i bcryptjs
+
+import bcrpt from 'bcryptjs'
+const users=[{name:"Admin User", email:"shirshakkandel@gmailcom", password:bcrypt.hashSync('123456', 10), isAdmin:true}]
+export default users
+
+data/products.js
+const products=[{name:"Airpods Wireless Bluetooth Headphones"}, image, description,brand,category,price,countInStock,rating,numReviews]
+export default products
+
+                6)Data Seeder Script   
+                
+        backend/seeder.js
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+import colors from 'colors'
+import users from './data/users.js'
+import products from './data/products.js'
+import User from './models/userModel.js'
+import Product from './models/productModel.js'
+import Order from './models/orderModel.js'
+
+import ConnectDB from './config/db.js'
+dotenv.config() connectDB()
+
+const importData = async()=> {
+    try{
+        await Order.deleteMany()
+        await Product.deleteMany()
+        await User.deleteMany()
+
+        const createdUsers =  await User.inserMany(users)
+        const adminUser = createdUsers[0]._id
+
+
+        const sampleProducts= products.map(product=> {
+            return {...products,user:adminUser}
+        })
+
+        await Product.inserMany(sampleProducts)
+        console.log(`Data Imported!`.green.inverse)
+        process.exit()
+    }catch(error){
+        console.log(`${error}`.red.inverse)
+        process.exit(1)
+    }}
+
+const destroyData= async()=> {
+        try{
+            await Order.deleteMany()
+            await Product.deleteMany()
+            await User.deleteMany()
+            console.log('Data Destoryed!'.red.inverse)
+            process.exit()
+        }catch(error) {
+            console.log(`${error}`.red.inverse)
+            process.exit(1)
+        }}
+
+    if(process.argv[2] === '-d'){
+        destroyData()
+    }else {
+        importData()
+    }
+
+    //package.json
+"data:import":"node backend/seeder"
+"data:destory":"node backend/seeder -d"
+
+  //commandLine npm run data:import  and npm run data:destory -data
+
+
+              7)Fetch Products from the Database   
+
+ backend/server.js
+ app.use('/api/products',productRoutes)
+
+
+      routes/productRoutes.js
+import express from 'express'
+import router = express.router()
+import asyncHandler from 'express-async-handler'
+import Product from '../models/ProductModel.js'
+# express-async-handler remove the buden of writing try and catch inside async function
+//@desc Fetch All products
+//@route Get /api/products
+//@access Public 
+ router.get('/', asyncHandler((req,res)=> {
+    const products= await Product.find({})
+    res.json(products)
+}))
+
+
+ router.get('/:id', asyncHandler(req,res)=> {
+    const product = await Product.findById(req.params.id)
+    if(product) {res.json(product)} else {res.status(404).json({message:"Product not Found"})}
+}))
+export default router
+
+        8)Getting Started With Postman    
+
+New Collection =>(name+description)=> Add Folder(Products+Descrition)
+Add request => (name+description)=> 
+Environment variabel => setting=> Proshop Env +Url()+Add 
+varible by {{URL}}
+default error is html response we take json data
+
+        9)Custom Error handling   
+
+            backend/server.js
+
+#custome middleware(function that access the request response cycle)
+app.use((req,res,next)=> {console.log("hello"); console.log(req.originalUrl); next();})
+app.use((err,req,res,next)=> {
+    const statusCode= res.statusCode ===200 ? 500 :res.statusCode
+    res.status(statusCode)
+    res.json({message:err.message, stack:process.env.NODE_ENV ==="production" ? null : err.stack})
+})
+
+app.use((req,res,next)=> {
+    const error = new Error(`Not Found -${req.originalUrl}`)
+    res.status(404); next(error)
+})
+
+backend/middleware/errorMiddleWare.js
+
+const notFound= (req,res,next)=> {
+    const error = new Error(`Not Found -${req.originalUrl}`)
+    res.status(404); next(error);
+}
+const errorHandler=(err,req,res,next)=> {
+    const statusCode = res.statusCode ===200 ? 500 :res.statusCode
+    res.status(statusCode)
+    res.json({message:err.message, stack:process.env.NODE_ENV ==="productin" ? null :err.stack})
+}
+
+export {notFound, errorHandler}
+
+  /server.js
+app.use(notFound); app.use(errorHandler)
+  
+    /productRoutes.js
+router.get('/:id',asyncHandler(async(req,res)=>{
+    const product = await Product.findById(req.params.id)
+    if(product){res.json(product)} else {res.status(404); throw new Error('Product not found')}
+}))

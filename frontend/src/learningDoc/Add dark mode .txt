@@ -1,0 +1,31 @@
+                    # Using styled components
+https://www.youtube.com/watch?v=G00V4tRx1ME  (8 min video)
+npx create react-react-app dark-mode-toggle
+nom i styled-components
+
+src/themes.js
+import {createGlobalStyle} from 'styled-components'
+export const lightTheme= { body:"#fff",fontColor:"#000"}
+export const darkTheme={body:'#000', fontColor:"#fff"}
+
+export const GlobalStyle= createGlobalStyle`
+body{background-color:${p=> p.theme.body}}
+`
+
+     # src/App.js
+import styled, {ThemeProvider} from 'styled-components'
+import {lightTheme, darkTheme, GlobalStyle} from './themes.js'
+const StyledApp= styled.div`
+color:${props=> props.them.fontColor}
+`
+
+export default function App(){
+     const [theme,setTheme] = useState('light')
+     const themeToggler = ()=> {theme==='light' ? setTheme('dark'): setTheme('light')}
+     
+return(
+     <ThemeProvider theme={theme==='light' ? lightTheme :darkTheme}>
+     <GlobalStyle/>
+     <StyledApp>Hello World</StyledApp>
+     <button onClick={()=> themeToggler() }>Change Theme</button>
+     </ThemeProvider>)}

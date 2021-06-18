@@ -1,0 +1,56 @@
+                    1)Prepare for Deployment  
+ cd fronetend => npm run build
+build static assests for react and then have backend load that index
+
+ backend/server.js
+
+ const __dirname = path.resolve()
+
+ if(process.env.NODE_ENV ==='production'){
+    app.use(express.static(path.join(__dirname,'/fronetend/build')))
+    app.get('*',(req,res)=> res.sendFile(path.resolve(__dirname,'frontend','build', 'index.html')))
+ } 
+ 
+ .env
+ NODE_ENV=production
+
+ localhost:5000 when we go to backend path=> we get production level build 
+ 
+                2)Deploy To Heroku  
+.env
+#production
+/frontend/build
+#misc 
+.env
+npm run build in server.
+
+Heroku
+brew sh 
+New =>
+
+heruko login 
+heruko create proshopapp
+
+/Procfile
+web: node backend/server.js
+
+package.json
+"script":{
+    "heroku-postbuild":"NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+}
+
+git add add .
+git commit -m "Prepare for deployment"
+
+Herouku /Deploy
+command: heruko git:remote -a proshopapp
+git push heroku master
+
+Application error
+
+heruko logs errors cause we donot have .env
+
+Setting/config vars
+NODE_ENV production
+MONGO_URI 
+

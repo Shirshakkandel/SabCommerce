@@ -1,0 +1,75 @@
+            2)Serving Products-Backend routes   
+npm init 
+npm i express
+
+backend//server.js
+const express = require('express')
+const products = require('./data/products')
+const app = express()
+app.get('/api/Products',(req,res)=> {
+    res.json(products)
+})
+app.get('/api/products', (req,res)=> {
+    res.json(product)
+})
+app.listen(5000, console.log('server is running on port 5000'))
+
+frontend//Screen/HomeScreen.js
+const HomeScreen=()=> {
+    const [product, setProducts] = useState([])
+    useEffect(()=> {
+        const fetchProducts= async()=> {
+            const {data} = await axios.get('/api/products')
+            setProducts(data)
+        }
+        fetchProducts()
+    }, [])
+}
+
+
+frontend/package.json
+{ "proxy":"https://127.0.0.1:5000"}
+
+Screen/ProductScreen.js
+
+const ProductScreen=({match})=> {
+    const [product,setProduct] = useStata({})
+
+    useEffect(()=> {
+        const fetchProduct = async()=> {
+        const {data}= await axios.get('api/products/${match.params.id}')
+        setProduct(data)
+        }
+        fetchProduct()  
+    },[match])}
+
+
+            4)Nodemon and Concurrently   '
+npm i -D nodemon concurrently
+packgae.json
+"script": {
+    "start": "node backend/server", "server":"nodemon backend/server", "client":"npm start --prefix frontend",\
+    "dev":"concurrently \"npm run server\" \"npm run client\""
+}
+
+        5)Environment variables  
+npm i dotenv
+//server.js
+const dotenv = require('dotenv')
+dotenv.config()
+
+//.env
+NODE_ENV=development
+PORT=5000
+server.js
+const PORT= process.env.PORT ||5000
+app.listen(PORT,console.log('Server running on port ${process.env.PORT}'))
+
+
+            6)Es Modules in Node.js  
+node --version above 14 we can use es6 
+ two methood .mjs  //package.json
+ {"type":"module"} 
+ in backend/we have to use .js in our import like
+ import products from './data/products.js' if not then cannot find module ../../product error occurs
+ 

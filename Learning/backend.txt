@@ -1,0 +1,8 @@
+               # 1)Login and register Controller
+1)first create new project name gyapuecommerce.then in .env add MONGO_URI 
+with changing password and database name
+2)make config/db.js file and import in server.js file 
+3)make model/userModel.js file with username,email,password,accountType,mobilenumber(5 field)
+4)Create controller called authUser and registerUser. need of generateToken for jwt verification.
+5)make notFound and errorHandler middleware
+6)postman configuration and checking.

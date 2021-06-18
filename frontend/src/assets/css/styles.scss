@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&display=swap');
+
+/* ./src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+a:focus,
+button:focus,
+input:focus {
+  outline: none;
+}
+
+/* for the material ui icons */
+.navigation .MuiSvgIcon-root {
+  font-size: 20px;
+  cursor: pointer;
+  color: #4b5563;
+}
+
+.product-card {
+  box-shadow: 1px 1px 5px rgb(235, 235, 235), -1px -1px 5px rgb(235, 235, 235);
+}
+
+.add-button-style {
+  @apply bg-primary text-white flex justify-center px-4 text-sm lg:text-base  py-2 space-x-2 focus:outline-none;
+}
+.checkout-style {
+  @apply bg-secondary text-primary flex px-4 text-sm lg:text-base justify-center py-2 space-x-2 focus:outline-none;
+}
+
+.sub-category {
+  display: none;
+}
+
+@media only screen and (min-width: 1024px) {
+  .category-container:hover .category-name {
+    @apply bg-primary;
+  }
+  .category-container:hover .sub-category {
+    display: block;
+  }
+}
+
+.input-style {
+  @apply border text-sm px-2 py-2.5 w-full focus:outline-none focus:border-secondary;
+}
+
+.breadcrumb li {
+  @apply inline-block;
+  ::after {
+    content: '>';
+    @apply mx-3 text-gray-500;
+  }
+}
+
+.select-style {
+  @apply focus:outline-none focus:border-secondary appearance-none w-full py-2 px-2 bg-white border border-gray-200 text-sm;
+}
