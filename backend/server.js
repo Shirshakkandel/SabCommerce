@@ -36,5 +36,7 @@ app.use('/api/users', userRoutes)
 app.use(notFound)
 app.use(errorHandler)
 
-app.listen(5000,console.log(`Server is running in 5000`))
+const PORT = process.env.PORT || 5000
+
+app.listen(PORT,console.log(`Server is running in 5000`))
 
