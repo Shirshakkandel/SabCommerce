@@ -11,8 +11,8 @@ node_modules/
 
 # production
 /frontend/build
-Learning
-mernecommerce
+/Learning
+/mernecommerce
 
 # misc
 .env
