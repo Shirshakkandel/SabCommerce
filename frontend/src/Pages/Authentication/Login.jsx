@@ -13,7 +13,7 @@ export default function Login({ history, location }) {
     if (userInfo) {
       history.push('/')
     }
-  }, [userInfo])
+  }, [userInfo, history])
 
   const [data, setData] = useState({
     email: '',

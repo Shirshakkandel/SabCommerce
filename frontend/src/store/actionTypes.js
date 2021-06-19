@@ -4,4 +4,9 @@ export const LOGIN_FAIL = "LOGIN_FAIL"
 
 export const REGISTER_REQUEST = "REGISTER_REQUEST"
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS"
-export const REGISTER_FAIL="REGISTER_FAIL"
+export const REGISTER_FAIL = "REGISTER_FAIL"
+
+               // Product actions types
+export const PRODUCT_LIST_REQUEST = "PRODUCT_LIST_REQUEST"
+export const PRODUCT_LIST_SUCCESS = "PRODUCT_LIST_SUCCESS"
+export const PRODUCT_LIST_FAIL="PRODUCT_LIST_FAIL"

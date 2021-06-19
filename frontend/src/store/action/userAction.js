@@ -5,12 +5,16 @@ const login = (email, password) => async (dispatch) => {
      try {
           dispatch({ type: LOGIN_REQUEST })
           const { data } = await axios.post('/api/users/login', { email, password }, { headers: { 'Content-Type': 'application/json' } })
+          if (data) {
           dispatch({ type: LOGIN_SUCCESS, payload: data })
           localStorage.setItem('userInfo', JSON.stringify(data))
+          }
+          
      } catch (error) {
           dispatch({
                type: LOGIN_FAIL,
-               payload:error.response.data.message
+               payload:error.response && error.response.data.message
+          ? error.response.data.message : "Please check your internet connection"
           })
      }
 }

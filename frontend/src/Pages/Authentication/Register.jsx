@@ -34,7 +34,7 @@ export default function Register({ history }) {
   }, [userInfo, history])
 
   const [data, setData] = useState({
-    userName: '',
+    name: '',
     email: '',
     accountType: 'individual',
     phoneNumber: '',
@@ -42,7 +42,7 @@ export default function Register({ history }) {
     countryCode: '+977',
     confirmPassword: '',
     errors: {
-      userName: '',
+      name: '',
       email: '',
       number: '',
       accountType: '',
@@ -54,7 +54,7 @@ export default function Register({ history }) {
   const [number, setNumber] = useState(data.countryCode + data.phoneNumber)
 
   const {
-    userName,
+    name,
     email,
     accountType,
     countryCode,
@@ -62,7 +62,7 @@ export default function Register({ history }) {
     password,
     confirmPassword,
     errors: {
-      userName: userNameErr,
+      name: nameErr,
       email: emailErr,
       accountType: accountErr,
       password: passwordErr,
@@ -75,7 +75,7 @@ export default function Register({ history }) {
   useEffect(() => {
     const num = countryCode + phoneNumber
     setNumber(num)
-  }, [data.countryCode, data.phoneNumber])
+  }, [countryCode, phoneNumber])
 
   function handleChange({ target: { value } }, property) {
     handleErrors(value, property)
@@ -83,7 +83,7 @@ export default function Register({ history }) {
   }
 
   function handleErrors(value, property) {
-    let result
+ 
     if (value.trim() === '') {
       errors[property] = `${property[0].toUpperCase()}${property.slice(
         1,
@@ -98,8 +98,8 @@ export default function Register({ history }) {
           errors.email = ''
           setCallRegister(true)
         }
-      } else if (property === 'userName') {
-        errors.userName = ''
+      } else if (property === 'name') {
+        errors.name = ''
         setCallRegister(true)
       } else if (property === 'password') {
         if (value.length < 8) {
@@ -132,7 +132,7 @@ export default function Register({ history }) {
       // try {
       //   const { data } = await axios.post(
       //     '/api/users',
-      //     { userName, email, accountType, number, password },
+      //     { name, email, accountType, number, password },
       //     { headers: { 'Content-Type': 'application/json' } }
       //   )
       //   if (data) {
@@ -162,19 +162,17 @@ export default function Register({ history }) {
           <div className=" space-y-1">
             <div className="label font-medium">
               <label>
-                UserName <span className="text-red-600">*</span>
+                Name <span className="text-red-600">*</span>
               </label>
             </div>
             <input
               type="text"
               className="input-style"
               placeholder="Enter your name"
-              value={userName}
-              onChange={(e) => handleChange(e, 'userName')}
+              value={name}
+              onChange={(e) => handleChange(e, 'name')}
             />
-            {userNameErr && (
-              <div className="error text-red-600">{userNameErr}</div>
-            )}
+            {nameErr && <div className="error text-red-600">{nameErr}</div>}
           </div>
           {/* Email */}
           <div className="space-y-1">

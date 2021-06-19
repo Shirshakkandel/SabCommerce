@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import MoreVertTwoToneIcon from '@material-ui/icons/MoreVertTwoTone'
 import WhatsAppIcon from '@material-ui/icons/WhatsApp'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Contact from '../../svg/salephone.svg'
 import Viber from '../../svg/viber.svg'
 import { Link, useHistory } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 export default function HeaderTop() {
   const userLogin = useSelector((state) => state.userLogin)
@@ -97,7 +97,7 @@ export default function HeaderTop() {
                 className=" cursor-pointer flex space-x-1"
                 onClick={() => setOpen(!open)}
               >
-                <p>{userInfo.userName}</p>
+                <p>{userInfo.name}</p>
                 <AccountCircleIcon style={{ fontSize: '18px' }} />
               </div>
               <div

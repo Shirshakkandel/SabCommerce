@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import watchImage from '../assets/images/homepage/watch.jpg'
 import ProductCard from '../Components/ProductCard'
-export default function TopPicks() {
+export default function TopPicks({ productsFromServer }) {
   const products = [
     {
       slug: 'watch-1',
@@ -39,7 +39,7 @@ export default function TopPicks() {
     },
   ]
   return (
-    <div className="px-8 md:px-14 lg-px-20 py-10 lg:py-20 bg-gray-50">
+    <div className=" py-5 lg:py-10 ">
       {/* Top Title */}
       <div className="flex justify-between">
         <h2 className="font-semibold text-xl md:text-2xl text-gray-700">

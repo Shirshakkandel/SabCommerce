@@ -11,7 +11,10 @@ export default function App() {
       <div className={`app  flex flex-col min-h-screen text-sm`}>
       <Header />
       <Switch>
-        <Route exact path="/" component={Home} />
+        <Route path="/" component={Home} exact />
+        <Route path="/search/:keyword" component={Home} exact />
+        <Route path="/page/:pageNumber" component={Home} exact/>
+        <Route path="/search/:keyword/page/:pageNumber" component={Home} exact/>
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login}/>
       </Switch>

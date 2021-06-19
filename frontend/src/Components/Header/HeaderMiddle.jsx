@@ -1,9 +1,21 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import SearchIcon from '@material-ui/icons/Search'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
+
 export default function HeaderMiddle() {
+  const [keyword, setKeyword] = useState('')
+  const history = useHistory()
+
+  function handleSearch(e) {
+    e.preventDefault()
+    if (keyword.trim()) {
+      history.push(`/search/${keyword}`)
+    } else {
+      history.push('/')
+    }
+  }
   return (
     <div className=" bg-primary px-4 sm:px-8 md:px-14 lg:px-20 ">
       <div className="flex justify-between space-x-4 sm:space-x-6 lg:space-x-28 items-center">
@@ -14,13 +26,18 @@ export default function HeaderMiddle() {
             className="h-16 w-auto object-cover"
           />
         </Link>
-        <form action="" className="flex-1 relative ">
+        <form onSubmit={handleSearch} className="flex-1 relative text-black ">
           <input
             type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
             placeholder="Search Somethings"
-            className="text-sm md:text-base border  text-black border-gray-300 w-full pl-4 pr-20 py-2 focus:outline-none focus:border-gray-400 "
+            className="text-sm text-black  border border-gray-300 w-full pl-4 pr-20 py-2 focus:outline-none focus:border-gray-400 "
           />
-          <button className="absolute right-0 top-0 bg-yellow-500 flex items-center px-6 md:px-10 lg:px-12 h-full cursor-pointer focus:outline-none">
+          <button
+            type="submit"
+            className="absolute right-0 top-0 bg-yellow-500 flex items-center px-6 md:px-10 lg:px-12 h-full cursor-pointer focus:outline-none"
+          >
             <SearchIcon />
           </button>
         </form>
