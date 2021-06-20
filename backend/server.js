@@ -19,6 +19,11 @@ if (process.env.NODE_ENV === "development") {
      app.use(morgan('dev'))
 }
 
+app.use(express.json())
+app.use('/api/users', userRoutes)
+app.use('/api/products',productRoutes)
+
+
 const __dirname = path.resolve()
 
 if (process.env.NODE_ENV === 'production') {
@@ -26,12 +31,11 @@ if (process.env.NODE_ENV === 'production') {
      app.get('*', (req, res) => {
           res.sendFile(path.resolve(__dirname,'frontend','build', 'index.html'))
      })
-}  
+} else {
+     app.get('/',(req,res)=> {res.send('API is running...')})
+}
 
-app.use(express.json())
 
-app.use('/api/users', userRoutes)
-app.use('/api/products',productRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
