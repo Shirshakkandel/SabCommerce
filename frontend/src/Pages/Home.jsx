@@ -3,7 +3,7 @@ import Carousel from '../Components/Carousel'
 import TopPicks from './TopPicks'
 import { useDispatch } from 'react-redux'
 import { listProducts } from '../store/action/productAction'
-// import AllProduct from '../Components/AllProduct'
+import AllProduct from '../Components/AllProduct'
 
 export default function Home({ match }) {
   const dispatch = useDispatch()
@@ -19,7 +19,7 @@ export default function Home({ match }) {
       <Carousel />
       <div className="bg-gray-50 px-8 md:px-14 lg:px-20">
         <TopPicks />
-        {/* <AllProduct /> */}
+        <AllProduct />
       </div>
     </>
   )
