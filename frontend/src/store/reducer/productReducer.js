@@ -14,7 +14,7 @@ const productListReducer = (state = { products: [] }, action) => {
                     pages: action.payload.pages,
                     page: action.payload.page}
           case PRODUCT_LIST_FAIL:
-               return { loading: false, error: payload, products:[] }
+               return { loading: false, error: payload }
           default:
                return state
      }
