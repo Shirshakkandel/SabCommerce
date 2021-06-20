@@ -6,3 +6,6 @@ with changing password and database name
 4)Create controller called authUser and registerUser. need of generateToken for jwt verification.
 5)make notFound and errorHandler middleware
 6)postman configuration and checking.
+
+                         # 2)second phase
+                         
