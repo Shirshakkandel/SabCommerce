@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 node_modules/
+/Learning
 /.pnp
 .pnp.js
 
@@ -11,7 +12,6 @@ node_modules/
 
 # production
 /frontend/build
-Learning/
 mernecommerce/
 learningDoc/
 

@@ -2,12 +2,32 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../../store/action/userAction'
+import Processing from '../../Components/Common/Processing'
+import styled from 'styled-components/macro'
+
+const LoginButton = styled.div`
+  background-color: #cc8125;
+  display: inline-block;
+
+  .animation-text {
+    z-index: 2;
+    display: block;
+  }
+  .animation-bg {
+    background-color: #e69f48;
+    z-index: 1;
+    width: 100%;
+    transition: 0.3s ease;
+  }
+  :hover > .animation-bg {
+    height: 100%;
+  }
+`
 
 export default function Login({ history, location }) {
   const dispatch = useDispatch()
-  const [result, setResult] = useState(false)
   const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo, error } = userLogin
+  const { userInfo, error, loading } = userLogin
   useEffect(() => {
     console.log(userInfo)
     if (userInfo) {
@@ -25,16 +45,11 @@ export default function Login({ history, location }) {
     },
   })
 
-  const {
-    email,
-    password,
-    errors: { email: emailError, password: passwordError },
-  } = data
-  const { errors } = data
-
   const handleErrors = (property, value) => {
     const { errors } = data
-    if (value.trim() === '') {
+    value = value === undefined ? data[property] : value
+    let result
+    if (value.trim() === '' && property !== 'password') {
       errors[property] = `${property[0].toUpperCase()}${property.slice(
         1,
         property.length
@@ -43,31 +58,23 @@ export default function Login({ history, location }) {
       if (property === 'email') {
         if (!value.match(/^\w+@\w+\.\w+(\.\w+)?$/gi)) {
           errors.email = 'Invalid email'
+          result = false
         } else {
           errors.email = ''
-          setResult(true)
+          result = true
         }
       } else {
         if (value.length < 8) {
           errors.password = 'Password must be atleat 8 characters'
-          setResult(false)
+          result = false
         } else {
           errors.password = ''
-          setResult(true)
+          result = true
         }
         setData({ ...data, errors })
       }
     }
-  }
-
-  function handleEmptyCheck() {
-    if (email.trim() === '') {
-      errors.email = 'Email cannot be left empty'
-    }
-    if (password.trim() === '') {
-      errors.password = 'Password field cannot be left empty'
-      setData({ ...data, errors })
-    }
+    return result
   }
 
   const handleChange = ({ target: { value } }, property) => {
@@ -76,34 +83,29 @@ export default function Login({ history, location }) {
   }
 
   const loginSubmitHandler = async (event) => {
-    handleEmptyCheck()
     event.preventDefault()
+    if (!loading) {
+      const { email, password } = data
+      const credentials = ['email', 'password']
+      let goAhead = true
 
-    if (result) {
-      dispatch(login(email, password))
-      //Call login to backend
-      // try {
-      //   setLoginLoading(true)
-      //   const { data } = await axios.post(
-      //     '/api/users/login',
-      //     {
-      //       email,
-      //       password,
-      //     },
-      //     { headers: { 'Content-Type': 'application/json' } }
-      //   )
-      //   if (data) {
-      //     setLoginLoading(false)
-      //     localStorage.setItem('userInfo', JSON.stringify(data))
-      //   }
-      // } catch (error) {
-      //   setLoginLoading(false)
-      //   // errors.login = `${error.response.data.message}`
-      //   setLoginError(`${error.response.data.message}`)
-      //   console.log(loginError)
-      // }
+      for (let i = 0; i < credentials.length; i++) {
+        const result = handleErrors(credentials[i])
+        console.log(handleErrors(credentials[i]))
+        if (goAhead !== false) {
+          goAhead = result
+        }
+      }
+      if (goAhead) {
+        dispatch(login(email, password))
+      }
     }
   }
+  const {
+    email,
+    password,
+    errors: { email: emailError, password: passwordError },
+  } = data
 
   return (
     <div className="mx-auto my-10 bg-white w-11/12 lg:w-1/2 md:w-full box-border px-10 py-5 shadow-2xl">
@@ -149,12 +151,25 @@ export default function Login({ history, location }) {
           {error && <div className="error text-red-600">{error}</div>}
           <p className="text-sm text-blue-500 pl-1">Forget password ?</p>
         </div>
-        <button
+        {/* <button
           type="submit"
           className="bg-yellow-500 mx-auto py-2.5 px-4 text-sm focus:outline-none text-primary "
         >
           Sign In
-        </button>
+        </button> */}
+
+        <LoginButton className="button-animation relative w-44 mx-auto text-white overflow-hidden">
+          <button className="animation-text relative mx-auto  text-center px-2.5 py-2 focus:outline-none">
+            <div className="flex justify-center space-x-2 items-center">
+              <div className="flex space-x-2 justify-center items-center">
+                <div>Login</div>
+                {loading && <Processing />}
+              </div>
+            </div>
+          </button>
+          <div className="animation-bg absolute bottom-0 h-0 "></div>
+        </LoginButton>
+
         <p className="text-sm text-center">
           Donot have an account ?{' '}
           <Link to="/register" className="underline">

@@ -4,24 +4,24 @@ import StarHalfIcon from '@material-ui/icons/StarHalf'
 
 export default function Rating({ value, text, color }) {
   return (
-    <div className="flex items-center space-x-3 pt-2">
-      <div className="flex items-center ">
-        {[...Array(Math.ceil(value)).keys()].map((x) => (
-          <span className=" text-red-500">
+    <div className="flex items-center space-x-3 ">
+      <div className="flex items-center text text-gray-500">
+        {[...Array(5).keys()].map((x) => (
+          <span className="-ml-1">
             {value >= x + 1 ? (
-              <StarIcon />
-            ) : value > (x + 1) / 2 ? (
-              <StarHalfIcon />
+              <StarIcon style={{ color: color }} />
+            ) : value >= x + 1 / 2 ? (
+              <StarHalfIcon style={{ color: color }} />
             ) : (
               <StarBorderIcon />
             )}
           </span>
         ))}
       </div>
-      <span className="text-gray-500">{text && `( ${text} reviews )`}</span>
+      {text && <span className="text-gray-500">{`${text} reviews`}</span>}
     </div>
   )
 }
 Rating.defaultProps = {
-  color: '#f8e825',
+  color: '#FFC60B',
 }

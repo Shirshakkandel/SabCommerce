@@ -1,15 +1,24 @@
-import { applyMiddleware, createStore } from "redux"
+import { applyMiddleware, createStore } from 'redux'
 import thunk from 'redux-thunk'
 import rootReducer from './rootReducer'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-const userInfoFromStorage = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')): null
+const userInfoFromStorage = localStorage.getItem('userInfo')
+  ? JSON.parse(localStorage.getItem('userInfo'))
+  : null
+const cartInfoFromStorage = localStorage.getItem('cartItems')
+  ? JSON.parse(localStorage.getItem('cartItems'))
+  : []
 
 const initialState = {
-     userLogin: { userInfo: userInfoFromStorage },
-
+  userLogin: { userInfo: userInfoFromStorage },
+  cart: { cartItems: cartInfoFromStorage },
 }
 const middleware = [thunk]
 
-const store = createStore(rootReducer, initialState, composeWithDevTools(applyMiddleware(...middleware)))
+const store = createStore(
+  rootReducer,
+  initialState,
+  composeWithDevTools(applyMiddleware(...middleware))
+)
 export default store

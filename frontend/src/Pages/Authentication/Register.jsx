@@ -3,12 +3,16 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { Link } from 'react-router-dom'
 import { register } from '../../store/action/userAction'
 import { useSelector, useDispatch } from 'react-redux'
+import Processing from '../../Components/Common/Processing'
 
 export default function Register({ history }) {
   const [callRegister, setCallRegister] = useState(false)
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin)
-  const { error, userInfo } = userLogin
+  const { userInfo } = userLogin
+
+  const userRegister = useSelector((state) => state.userRegister)
+  const { error, loading } = userRegister
 
   // useEffect(() => {
   //   function checkUserData() {
@@ -29,6 +33,7 @@ export default function Register({ history }) {
   //Push to Homepage if already login
   useEffect(() => {
     if (userInfo) {
+      window.scrollTo(0, 0)
       history.push('/')
     }
   }, [userInfo, history])
@@ -82,8 +87,12 @@ export default function Register({ history }) {
     setData({ ...data, [property]: value })
   }
 
+  function handleEmptyCheck() {
+    if (!email.trim()) { errors.email = "Email cannot be empty" }
+    if(!password.trim()){errors.password="Password cannot be empty"}
+    
+  }
   function handleErrors(value, property) {
- 
     if (value.trim() === '') {
       errors[property] = `${property[0].toUpperCase()}${property.slice(
         1,
@@ -278,10 +287,17 @@ export default function Register({ history }) {
           </div>
           {error && <div className="text-red-500">{error}</div>}
           {/* Submit Button */}
-          <div className="w-full flex justify-center items-center ">
-            <button className="w-44 bg-yellow-500 text-black px-2.5 py-2 text-base focus:outline-none ">
-              Register
-            </button>
+          <div className="w-full relative flex justify-center items-center group ">
+            <div className="text relative space-x-2">
+              <button
+                type="submit"
+                className="w-44  space-x-2 mx-auto bg-yellow-500 text-black px-2.5 py-2 text-base focus:outline-none flex justify-center items-center "
+              >
+                <div>Register</div>
+                {loading && <Processing />}
+              </button>
+            </div>
+            <div className="bg absolute bottom-0 h-0 bg-yellow-100 group-hover:h-1"></div>
           </div>
 
           <div className="text-xs pb-2 text-center">

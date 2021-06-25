@@ -1,24 +1,43 @@
 import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import SearchIcon from '@material-ui/icons/Search'
+import { useSelector } from 'react-redux'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 
 export default function HeaderMiddle() {
   const [keyword, setKeyword] = useState('')
   const history = useHistory()
+  const [stickyNav, setStickyNav] = useState(false)
+  const cart = useSelector((state) => state.cart)
+  const { cartItems } = cart
+  const fixedPosition = () => {
+    if (window.pageYOffset >= 80) {
+      setStickyNav(true)
+    } else {
+      setStickyNav(false)
+    }
+  }
+
+  window.addEventListener('scroll', fixedPosition)
 
   function handleSearch(e) {
     e.preventDefault()
     if (keyword.trim()) {
+      window.scrollTo(0, 0)
       history.push(`/search/${keyword}`)
     } else {
       history.push('/')
     }
   }
   return (
-    <div className=" bg-primary px-4 sm:px-8 md:px-14 lg:px-20 ">
-      <div className="flex justify-between space-x-4 sm:space-x-6 lg:space-x-28 items-center">
+    <div
+      id="middle"
+      className={`bg-primary z-50 ${
+        stickyNav && 'shadow  fixed top-0 inset-x-0 animation '
+      }`}
+    >
+      <div className="flex justify-between px-4 sm:px-8 md:px-14 lg:px-20  space-x-4 sm:space-x-6 lg:space-x-28 items-center">
         <Link to="/">
           <img
             src="/images/ecommerce-logo.png"
@@ -55,7 +74,7 @@ export default function HeaderMiddle() {
               className="absolute w-5 h-5 bg-yellow-300 text-center"
               style={{ top: '-10px', right: '-15px', borderRadius: '100%' }}
             >
-              0
+              {cartItems.length}
             </span>
           </Link>
         </div>
