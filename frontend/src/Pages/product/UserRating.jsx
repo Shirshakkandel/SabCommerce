@@ -60,7 +60,6 @@ export default function UserRating() {
   async function submitComment(e) {
     e.preventDefault()
     const goAhead = handleErrors()
-    alert(goAhead)
 
     if (goAhead) {
       setReview({ ...review, errors: '' })

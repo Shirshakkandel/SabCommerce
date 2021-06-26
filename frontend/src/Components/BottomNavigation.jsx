@@ -27,7 +27,7 @@ export default function BottomNavigation() {
             </Link>
           </li>
           <li className="relative">
-            <Link to="/cart">
+            <Link onClick={() => window.scrollTo(0, 0)} to="/cart">
               <ShoppingCartIcon />
               <h6>Cart</h6>
               <span className="absolute -top-2 -right-2 rounded-full bg-yellow-500  text-xs w-5 h-5 flex items-center justify-center">
