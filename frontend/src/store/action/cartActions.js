@@ -1,4 +1,5 @@
-import { CART_ADD_ITEM } from '../actionTypes'
+import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../actionTypes'
+export { addToCart, removeFromCart }
 
 const addToCart = (qty, item) => (dispatch, getState) => {
   const { _id, name, image, price, countInStock } = item
@@ -6,4 +7,7 @@ const addToCart = (qty, item) => (dispatch, getState) => {
   localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
 }
 
-export { addToCart }
+const removeFromCart = (id) => (dispatch, getState) => {
+  dispatch({ type: CART_REMOVE_ITEM, payload: id })
+  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cartItems))
+}

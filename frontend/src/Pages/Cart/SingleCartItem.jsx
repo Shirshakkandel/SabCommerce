@@ -1,10 +1,16 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-
+import { useSelector, useDispatch } from 'react-redux'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 
+import { CART_REMOVE_ITEM } from '../../store/actionTypes'
+import { removeFromCart } from '../../store/action/cartActions'
+
 export default function SingleCartItem({ _id, name, image, price, countInStock, qty }) {
+  const dispatch = useDispatch()
+  const cart = useSelector((state) => state.cart)
+  const { cartItems } = cart
   return (
     <div className="mt-4 flex-wrap text-secondary relative overflow-hidden cursor-pointer pb-10 border-b border-primary">
       <div className="mr-2 sm:mr-4">
@@ -32,6 +38,10 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
           className="my-auto hover:text-red-500 text-center focus:outline-none w-1/2"
           tabIndex="0"
           title="Remove from Cart"
+          onClick={() => {
+            dispatch(removeFromCart(_id))
+            // localStorage.setItem('cartItems', JSON.stringify(cartItems))
+          }}
         >
           <DeleteOutlineIcon />
         </div>

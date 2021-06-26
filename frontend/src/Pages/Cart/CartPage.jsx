@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components/macro'
 
@@ -11,7 +11,6 @@ const Right = styled.div``
 const Buttom = styled.div``
 
 export default function CartPage() {
-  const dispatch = useDispatch()
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
 
@@ -28,15 +27,11 @@ export default function CartPage() {
         </ul>
       </section>
 
-      <h1 className="mx-auto py-5 text-lg md:text-xl font-bold text-gray-700">
-        Shopping Cart
-      </h1>
+      <h1 className="mx-auto py-5 text-lg md:text-xl font-bold text-gray-700">Shopping Cart</h1>
 
       <div className="flex flex-col lg:flex-row lg:space-x-3 font-sans space-y-3 lg:space-y-0 ">
         <Left className="flex-1 bg-white p-3 lg:p-5 rounded shadow-lg space-y-3 ">
-          <h2 className="text-secondary font-medium">
-            My Cart ({cartItems.length} items)
-          </h2>
+          <h2 className="text-secondary font-medium">My Cart ({cartItems.length} items)</h2>
           <div className="flex flex-col ">
             {cartItems.map((cartItem, key) => {
               return <SingleCartItem key={key} {...cartItem} />

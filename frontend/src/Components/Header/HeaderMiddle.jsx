@@ -12,7 +12,7 @@ export default function HeaderMiddle() {
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
   const fixedPosition = () => {
-    if (window.pageYOffset >= 80) {
+    if (window.pageYOffset >= 100) {
       setStickyNav(true)
     } else {
       setStickyNav(false)
@@ -33,9 +33,7 @@ export default function HeaderMiddle() {
   return (
     <div
       id="middle"
-      className={`bg-primary z-50 ${
-        stickyNav && 'shadow  fixed top-0 inset-x-0 animation '
-      }`}
+      className={`bg-primary z-50 ${stickyNav && 'shadow  fixed top-0 inset-x-0 animation '}`}
     >
       <div className="flex justify-between px-4 sm:px-8 md:px-14 lg:px-20  space-x-4 sm:space-x-6 lg:space-x-28 items-center">
         <Link to="/">
