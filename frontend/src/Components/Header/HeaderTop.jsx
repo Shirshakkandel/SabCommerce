@@ -23,21 +23,11 @@ export default function HeaderTop() {
     <div className="headerTop px-5 lg:px-20 border-b ">
       <div className="flex items-center justify-between space-x-2 text-sm h-8 md:space-x-10  ">
         <div className="topLeft hidden lg:flex items-center whitespace-nowrap  space-x-1 md:space-x-2">
-          <img
-            src={Contact}
-            alt="Phone"
-            title="Phone Call"
-            className="h-5 border-r"
-          />
+          <img src={Contact} alt="Phone" title="Phone Call" className="h-5 border-r" />
           <div title="WhatsApp" className="border-r">
             <WhatsAppIcon style={{ fontSize: '20px' }} />
           </div>
-          <img
-            src={Viber}
-            alt="Viber"
-            title="Viber"
-            style={{ height: '18px', marginTop: '2px' }}
-          />
+          <img src={Viber} alt="Viber" title="Viber" style={{ height: '18px', marginTop: '2px' }} />
           <a className="text-xs font-bold border-r" href="tel:+977-9846863569">
             +977 9846863569
           </a>
@@ -47,7 +37,7 @@ export default function HeaderTop() {
           <div
             tabIndex="0"
             onClick={() => setLinkOpen(!linkOpen)}
-            className="flex flex-col"
+            className="flex flex-col focus:outline-none"
             onBlur={() => setLinkOpen(false)}
           >
             <div className="">
@@ -88,15 +78,8 @@ export default function HeaderTop() {
 
         <div className="right flex space-x-3 text-xs whitespace-nowrap font-semibold ">
           {userInfo ? (
-            <div
-              className="relative"
-              tabIndex="0"
-              onBlur={() => setOpen(false)}
-            >
-              <div
-                className=" cursor-pointer flex space-x-1"
-                onClick={() => setOpen(!open)}
-              >
+            <div className="relative" tabIndex="0" onBlur={() => setOpen(false)}>
+              <div className=" cursor-pointer flex space-x-1" onClick={() => setOpen(!open)}>
                 <p>{userInfo.name}</p>
                 <AccountCircleIcon style={{ fontSize: '18px' }} />
               </div>

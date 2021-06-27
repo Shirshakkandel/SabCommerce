@@ -3,6 +3,7 @@ import offerImage from '../assets/images/homepage/offer.png'
 import offerImage1 from '../assets/images/homepage/offer1.png'
 import offerImage2 from '../assets/images/homepage/offer2.jpg'
 import impactImage from '../assets/images/homepage/impact-of-covid.png'
+// import CartImage from '../assets/images/homepage/cart.svg'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 export default function Carousel() {
@@ -35,9 +36,7 @@ export default function Carousel() {
             <div
               key={key}
               className={`${
-                currentSlide === key
-                  ? 'opacity-1 transition duration-700'
-                  : ' opacity-0 '
+                currentSlide === key ? 'opacity-1 transition duration-700' : ' opacity-0 '
               }  `}
             >
               {key === currentSlide && (

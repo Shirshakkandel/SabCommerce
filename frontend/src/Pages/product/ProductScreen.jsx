@@ -39,9 +39,7 @@ export default function ProductScreen({ match }) {
       qty <= 1 ? setQty(1) : setQty(qty - 1)
     }
     if (direction === 'increase') {
-      qty >= product.countInStock
-        ? setQty(product.countInStock)
-        : setQty(qty + 1)
+      qty >= product.countInStock ? setQty(product.countInStock) : setQty(qty + 1)
     }
   }
   return (
@@ -73,11 +71,7 @@ export default function ProductScreen({ match }) {
           <ProductScreenFlex className="space-y-3 lg:space-y-0 mb-2 lg:mb-5 lg:flex lg:space-x-6 lg:mt-5  ">
             {/* Product Image */}
             <div className="image w-full  lg:w-2/4 lg:3/4 md:space-y-2 mx-auto ">
-              <img
-                src={product.image}
-                alt="Product"
-                className="w-full h-80 lg:h-96"
-              />
+              <img src={product.image} alt="Product" className="w-full h-80 lg:h-96" />
             </div>
             {/* Product Info */}
             <div className="info flex-1 space-y-4 bg-white px-4 py-4">
@@ -89,15 +83,11 @@ export default function ProductScreen({ match }) {
               {/* Price */}
               <h3 className=" font-bold space-x-2 text-gray-500 text-xl lg:text-2xl border-dashed border-b border-secondary ">
                 <span>Price :</span>
-                <span>
-                  Rs.{product.price && numberWithCommas(product.price)}
-                </span>
+                <span>Rs.{product.price && numberWithCommas(product.price)}</span>
               </h3>
               {/* Count in Stock */}
               <p
-                className={` text-lg ${
-                  product.countInStock ? ' text-green-500' : ' text-red-500'
-                }`}
+                className={` text-lg ${product.countInStock ? ' text-green-500' : ' text-red-500'}`}
               >
                 {product.countInStock ? 'In Stock' : 'Out of Stock'}
                 <span>
@@ -118,11 +108,7 @@ export default function ProductScreen({ match }) {
                   >
                     <Remove />
                   </div>
-                  <input
-                    type="text"
-                    className="w-2/4 text-center font-bold"
-                    value={qty}
-                  />
+                  <input type="text" className="w-2/4 text-center font-bold" value={qty} />
                   <div
                     className="right p-2 bg-gray-200"
                     onClick={() => {
@@ -152,11 +138,7 @@ export default function ProductScreen({ match }) {
                   onClick={() => setFill(!fill)}
                 >
                   <span>
-                    {fill ? (
-                      <FavoriteIcon className="text-red-500" />
-                    ) : (
-                      <FavoriteBorderIcon />
-                    )}
+                    {fill ? <FavoriteIcon className="text-red-500" /> : <FavoriteBorderIcon />}
                   </span>
                   <div>WishtList</div>
                 </div>
@@ -185,9 +167,7 @@ export default function ProductScreen({ match }) {
                     </span>
                     Add to Cart
                   </button>
-                  <button className="h-10 bg-green-500 mr-1 w-1/2">
-                    Buy Now
-                  </button>
+                  <button className="h-10 bg-green-500 mr-1 w-1/2">Buy Now</button>
                 </div>
               </div>
             </div>
