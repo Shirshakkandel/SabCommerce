@@ -7,6 +7,9 @@ import Register from './Pages/Authentication/Register'
 import Login from './Pages/Authentication/Login'
 import ProductScreen from './Pages/product/ProductScreen'
 import CartPage from './Pages/Cart/CartPage'
+import ShippingScreen from './Pages/Checkout/ShippingScreen'
+import SelectPayment from './Pages/Checkout/SelectPayment'
+import OrderScreen from './Pages/Order/OrderScreen'
 
 export default function App() {
   return (
@@ -16,15 +19,14 @@ export default function App() {
         <Route path="/" component={Home} exact />
         <Route path="/search/:keyword" component={Home} exact />
         <Route path="/page/:pageNumber" component={Home} exact />
-        <Route
-          path="/search/:keyword/page/:pageNumber"
-          component={Home}
-          exact
-        />
+        <Route path="/search/:keyword/page/:pageNumber" component={Home} exact />
         <Route path="/product/:id" component={ProductScreen} />
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
         <Route path="/cart" component={CartPage} />
+        <Route path="/shipping" component={ShippingScreen} />
+        <Route path="/payment" component={SelectPayment} />
+        <Route path="/order/:id" component={OrderScreen} />
       </Switch>
       <Footer />
       <ButtomNavigation />

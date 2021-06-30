@@ -5,7 +5,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Contact from '../../svg/salephone.svg'
 import Viber from '../../svg/viber.svg'
 import { Link, useHistory } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../../store/action/userAction'
 
 export default function HeaderTop() {
   const userLogin = useSelector((state) => state.userLogin)
@@ -13,12 +14,7 @@ export default function HeaderTop() {
   const [linkOpen, setLinkOpen] = useState(false)
   const history = useHistory()
   const [open, setOpen] = useState(false)
-
-  function handleLogout() {
-    localStorage.removeItem('userInfo')
-    document.location.href = '/login'
-  }
-
+  const dispatch = useDispatch()
   return (
     <div className="headerTop px-5 lg:px-20 border-b ">
       <div className="flex items-center justify-between space-x-2 text-sm h-8 md:space-x-10  ">
@@ -34,12 +30,7 @@ export default function HeaderTop() {
         </div>
 
         <div className="flex space-x-1 cursor-pointer lg:hidden relative">
-          <div
-            tabIndex="0"
-            onClick={() => setLinkOpen(!linkOpen)}
-            className="flex flex-col focus:outline-none"
-            onBlur={() => setLinkOpen(false)}
-          >
+          <div tabIndex="0" onClick={() => setLinkOpen(!linkOpen)} className="flex flex-col focus:outline-none" onBlur={() => setLinkOpen(false)}>
             <div className="">
               <MoreVertTwoToneIcon />
               <span>Links</span>
@@ -112,7 +103,7 @@ export default function HeaderTop() {
                   <div
                     onClick={() => {
                       setOpen(false)
-                      handleLogout()
+                      dispatch(logout())
                     }}
                   >
                     Logout

@@ -4,18 +4,22 @@ import { Link } from 'react-router-dom'
 import { listProductDetails } from '../../store/action/productAction'
 import Rating from '../../Components/Rating'
 import Loader from '../../Components/Loader'
+
 import { Alert, AlertTitle } from '@material-ui/lab'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import AddIcon from '@material-ui/icons/Add'
 import Remove from '@material-ui/icons/Remove'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import FavoriteIcon from '@material-ui/icons/Favorite'
+
 import { addToCart } from '../../store/action/cartActions'
 import styled from 'styled-components/macro'
 import UserRating from './UserRating'
 
 const ProductScreenStyle = styled.div``
 const ProductScreenFlex = styled.div``
+const InfoRight = styled.div``
+const MobileBottomFixed = styled.div``
 
 export default function ProductScreen({ match }) {
   const dispatch = useDispatch()
@@ -23,8 +27,21 @@ export default function ProductScreen({ match }) {
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
   const { product, error, loading } = productDetails
-  const [qty, setQty] = useState(1)
+
+  const [qty, setQty] = useState(product.countInStock === 0 ? 0 : 1)
   const [fill, setFill] = useState(false)
+
+  const [subDisable, setSubDisable] = useState(false)
+  const [addDisable, setAddDisable] = useState(false)
+
+  useEffect(() => {
+    if (product.countInStock === 0) {
+      setSubDisable(true)
+      setAddDisable(true)
+    }
+    qty <= 1 ? setSubDisable(true) : setSubDisable(false)
+    qty >= product.countInStock ? setAddDisable(true) : setAddDisable(false)
+  }, [qty, product.countInStock])
 
   useEffect(() => {
     dispatch(listProductDetails(match.params.id))
@@ -36,7 +53,7 @@ export default function ProductScreen({ match }) {
 
   function handleQty(direction) {
     if (direction === 'decrease') {
-      qty <= 1 ? setQty(1) : setQty(qty - 1)
+      qty <= 1 ? setQty(qty) : setQty(qty - 1)
     }
     if (direction === 'increase') {
       qty >= product.countInStock ? setQty(product.countInStock) : setQty(qty + 1)
@@ -74,7 +91,7 @@ export default function ProductScreen({ match }) {
               <img src={product.image} alt="Product" className="w-full h-80 lg:h-96" />
             </div>
             {/* Product Info */}
-            <div className="info flex-1 space-y-4 bg-white px-4 py-4">
+            <InfoRight className="info flex-1 space-y-4 bg-white px-4 py-4">
               <h3 className=" font-bold lg:font-medium text-sm lg:text-xl text-secondary">
                 {product.name}
               </h3>
@@ -100,30 +117,33 @@ export default function ProductScreen({ match }) {
               <div className="flex space-x-3 text-secondary text-sm font-normal items-center border-b border-dashed border-secondary p-3">
                 <p>Qty:</p>
                 <div className="select flex w-40 ">
-                  <div
-                    className="left p-2 bg-gray-200"
+                  <button
+                    className="left p-2 bg-gray-200 disabled:cursor-not-allowed cursor-pointer "
+                    disabled={subDisable}
                     onClick={() => {
                       handleQty('decrease')
                     }}
                   >
                     <Remove />
-                  </div>
+                  </button>
                   <input type="text" className="w-2/4 text-center font-bold" value={qty} />
-                  <div
-                    className="right p-2 bg-gray-200"
+                  <button
+                    className="right p-2 bg-gray-200 disabled:cursor-not-allowed cursor-pointer"
+                    disabled={addDisable}
                     onClick={() => {
                       handleQty('increase')
                     }}
                   >
                     <AddIcon />
-                  </div>
+                  </button>
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4  text-primary ">
                 <button
-                  className="hidden  bg-blue-500 lg:flex justify-center items-center pt-1.5 pb-1.5 focus:outline-none text-lg space-x-2 relative"
+                  className="hidden  bg-blue-500 lg:flex justify-center items-center pt-1.5 pb-1.5 disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none text-lg space-x-2 relative"
                   onClick={() => dispatch(addToCart(qty, product))}
+                  disabled={product.countInStock === 0}
                 >
                   <span>
                     <ShoppingCartIcon />
@@ -143,34 +163,7 @@ export default function ProductScreen({ match }) {
                   <div>WishtList</div>
                 </div>
               </div>
-
-              {/* Buttom Navigation in mobile  */}
-              <div className="h-14 border-t border-primary bg-primary px-2 text-white shadow text-center block fixed inset-x-0 bottom-0 lg:hidden z-50">
-                <div className="mx-auto flex h-full items-center">
-                  <div className="relative w-10 mr-6 text-secondary">
-                    <Link to="/cart">
-                      <ShoppingCartIcon />
-                      <h6>
-                        Cart
-                        <span className="absolute -top-1.5 -right-1.5 rounded-full bg-yellow-500 w-4 text-center font-semibold ">
-                          {cartItems.length}
-                        </span>
-                      </h6>
-                    </Link>
-                  </div>
-                  <button
-                    className="h-10 bg-blue-700 mr-1 w-1/2"
-                    onClick={() => dispatch(addToCart(qty, product))}
-                  >
-                    <span>
-                      <ShoppingCartIcon />
-                    </span>
-                    Add to Cart
-                  </button>
-                  <button className="h-10 bg-green-500 mr-1 w-1/2">Buy Now</button>
-                </div>
-              </div>
-            </div>
+            </InfoRight>
           </ProductScreenFlex>
 
           {/* Product Detail */}
@@ -182,6 +175,33 @@ export default function ProductScreen({ match }) {
           </div>
 
           <UserRating product={product} />
+
+          <MobileBottomFixed className="h-14 border-t border-primary bg-primary px-2 text-white shadow text-center block fixed inset-x-0 bottom-0 lg:hidden z-50">
+            <div className="mx-auto flex h-full items-center">
+              <div className="relative w-10 mr-6 text-secondary">
+                <Link to="/cart">
+                  <ShoppingCartIcon />
+                  <h6>
+                    Cart
+                    <span className="absolute -top-1.5 -right-1.5 rounded-full bg-yellow-500 w-4 text-center font-semibold ">
+                      {cartItems.length}
+                    </span>
+                  </h6>
+                </Link>
+              </div>
+              <button
+                className="h-10 bg-blue-700 mr-1 w-1/2 disabled:cursor-not-allowed disabled:opacity-75  "
+                onClick={() => dispatch(addToCart(qty, product))}
+                disabled={product.countInStock === 0}
+              >
+                <span>
+                  <ShoppingCartIcon />
+                </span>
+                Add to Cart
+              </button>
+              <button className="h-10 bg-green-500 mr-1 w-1/2">Buy Now</button>
+            </div>
+          </MobileBottomFixed>
         </ProductScreenStyle>
       )}
     </>

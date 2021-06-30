@@ -11,15 +11,11 @@ export default function HeaderMiddle() {
   const [stickyNav, setStickyNav] = useState(false)
   const cart = useSelector((state) => state.cart)
   const { cartItems } = cart
-  const fixedPosition = () => {
-    if (window.pageYOffset >= 100) {
-      setStickyNav(true)
-    } else {
-      setStickyNav(false)
-    }
-  }
 
-  window.addEventListener('scroll', fixedPosition)
+  window.onscroll = () => {
+    setStickyNav(window.pageYOffset === 0 ? false : true)
+    return () => (window.onscroll = null)
+  }
 
   function handleSearch(e) {
     e.preventDefault()
@@ -30,6 +26,7 @@ export default function HeaderMiddle() {
       history.push('/')
     }
   }
+
   return (
     <div
       id="middle"

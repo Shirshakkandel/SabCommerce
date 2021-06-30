@@ -7,8 +7,6 @@ import {
   PRODUCT_LIST_SUCCESS,
 } from '../actionTypes'
 
-export { productListReducer, productDetailsReducer }
-
 const productListReducer = (state = { products: [] }, action) => {
   const { type, payload } = action
 
@@ -43,3 +41,5 @@ const productDetailsReducer = (state = { product: { reviews: [] } }, action) => 
       return state
   }
 }
+
+export { productListReducer, productDetailsReducer }

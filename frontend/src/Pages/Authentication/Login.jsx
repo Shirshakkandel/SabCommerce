@@ -28,12 +28,14 @@ export default function Login({ history, location }) {
   const dispatch = useDispatch()
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo, error, loading } = userLogin
+  const redirect = location.search ? location.search.split('=')[1] : '/'
+
   useEffect(() => {
     console.log(userInfo)
     if (userInfo) {
-      history.push('/')
+      history.push(redirect)
     }
-  }, [userInfo, history])
+  }, [userInfo, history, redirect])
 
   const [data, setData] = useState({
     email: '',
@@ -44,6 +46,11 @@ export default function Login({ history, location }) {
       // login: '',
     },
   })
+
+  const handleChange = ({ target: { value } }, property) => {
+    handleErrors(property, value)
+    setData({ ...data, [property]: value })
+  }
 
   const handleErrors = (property, value) => {
     const { errors } = data
@@ -77,11 +84,6 @@ export default function Login({ history, location }) {
     return result
   }
 
-  const handleChange = ({ target: { value } }, property) => {
-    handleErrors(property, value)
-    setData({ ...data, [property]: value })
-  }
-
   const loginSubmitHandler = async (event) => {
     event.preventDefault()
     if (!loading) {
@@ -109,9 +111,7 @@ export default function Login({ history, location }) {
 
   return (
     <div className="mx-auto my-10 bg-white w-11/12 lg:w-1/2 md:w-full box-border px-10 py-5 shadow-2xl">
-      <h2 className="text-center text-lg text-gray-600 font-bold">
-        Login Form
-      </h2>
+      <h2 className="text-center text-lg text-gray-600 font-bold">Login Form</h2>
       {/* Form */}
       <form onSubmit={loginSubmitHandler} className="flex flex-col space-y-4">
         {/* Email */}
@@ -145,9 +145,7 @@ export default function Login({ history, location }) {
             onChange={(e) => handleChange(e, 'password')}
             id="password"
           />
-          {passwordError && (
-            <div className="error text-red-600">{passwordError}</div>
-          )}
+          {passwordError && <div className="error text-red-600">{passwordError}</div>}
           {error && <div className="error text-red-600">{error}</div>}
           <p className="text-sm text-blue-500 pl-1">Forget password ?</p>
         </div>
