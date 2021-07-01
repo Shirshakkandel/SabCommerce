@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
 import swaggerJsDoc from 'swagger-jsdoc'
+import compression from 'compression'
 
 import connectDB from './config/db.js'
 import userRoutes from './routes/userRoutes.js'
@@ -15,6 +16,7 @@ import { notFound, errorHandler } from './middleware/errorMiddleware.js'
 dotenv.config()
 connectDB()
 const app = express()
+app.use(compression())
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
