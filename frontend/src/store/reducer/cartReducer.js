@@ -3,16 +3,15 @@ import { CART_ADD_ITEM, CART_CLEAR_ITEMS, CART_REMOVE_ITEM, CART_SAVE_SHIPPING_A
 const cartReducer = (state = { cartItems: [], shippingAddress: {} }, action) => {
   switch (action.type) {
     case CART_ADD_ITEM:
-      const item = action.payload
-      const existItem = state.cartItems.find((x) => x._id === item._id)
+      const existItem = state.cartItems.find((x) => x.product === action.payload.product)
       if (existItem) {
-        return { ...state, cartItems: state.cartItems.map((x) => (x._id === item._id ? item : x)) }
+        return { ...state, cartItems: state.cartItems.map((x) => (x.product === action.payload.product ? action.payload : x)) }
       } else {
-        return { ...state, cartItems: [...state.cartItems, item] }
+        return { ...state, cartItems: [...state.cartItems, action.payload] }
       }
 
     case CART_REMOVE_ITEM:
-      return { ...state, cartItems: state.cartItems.filter((x) => x._id !== action.payload) }
+      return { ...state, cartItems: state.cartItems.filter((x) => x.product !== action.payload) }
 
     case CART_SAVE_SHIPPING_ADDRESS:
       return { ...state, shippingAddress: action.payload }

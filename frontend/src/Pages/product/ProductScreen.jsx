@@ -92,9 +92,7 @@ export default function ProductScreen({ match }) {
             </div>
             {/* Product Info */}
             <InfoRight className="info flex-1 space-y-4 bg-white px-4 py-4">
-              <h3 className=" font-bold lg:font-medium text-sm lg:text-xl text-secondary">
-                {product.name}
-              </h3>
+              <h3 className=" font-bold lg:font-medium text-sm lg:text-xl text-secondary">{product.name}</h3>
 
               <Rating value={product.rating} text={product.numReviews} />
               {/* Price */}
@@ -103,15 +101,9 @@ export default function ProductScreen({ match }) {
                 <span>Rs.{product.price && numberWithCommas(product.price)}</span>
               </h3>
               {/* Count in Stock */}
-              <p
-                className={` text-lg ${product.countInStock ? ' text-green-500' : ' text-red-500'}`}
-              >
+              <p className={` text-lg ${product.countInStock ? ' text-green-500' : ' text-red-500'}`}>
                 {product.countInStock ? 'In Stock' : 'Out of Stock'}
-                <span>
-                  {product.countInStock && product.countInStock <= 5
-                    ? `Only ${product.countInStock} Items remainning`
-                    : ''}
-                </span>
+                <span>{product.countInStock && product.countInStock <= 5 ? `Only ${product.countInStock} Items remainning` : ''}</span>
               </p>
               {/* qty control */}
               <div className="flex space-x-3 text-secondary text-sm font-normal items-center border-b border-dashed border-secondary p-3">
@@ -142,7 +134,7 @@ export default function ProductScreen({ match }) {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4  text-primary ">
                 <button
                   className="hidden  bg-blue-500 lg:flex justify-center items-center pt-1.5 pb-1.5 disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none text-lg space-x-2 relative"
-                  onClick={() => dispatch(addToCart(qty, product))}
+                  onClick={() => dispatch(addToCart(qty, { product: product._id, name: product.name, image: product.image, price: product.price }))}
                   disabled={product.countInStock === 0}
                 >
                   <span>
@@ -150,16 +142,12 @@ export default function ProductScreen({ match }) {
                   </span>
                   Add to Cart
                 </button>
-                <button className="hidden bg-yellow-500 lg:flex justify-center pt-1.5 pb-1.5 focus-outline-none text-lg ">
-                  Buy Now
-                </button>
+                <button className="hidden bg-yellow-500 lg:flex justify-center pt-1.5 pb-1.5 focus-outline-none text-lg ">Buy Now</button>
                 <div
                   className="flex justify-center space-x-2 items-center text-lg cursor-pointer py-1.5 bg-green-500 "
                   onClick={() => setFill(!fill)}
                 >
-                  <span>
-                    {fill ? <FavoriteIcon className="text-red-500" /> : <FavoriteBorderIcon />}
-                  </span>
+                  <span>{fill ? <FavoriteIcon className="text-red-500" /> : <FavoriteBorderIcon />}</span>
                   <div>WishtList</div>
                 </div>
               </div>
@@ -168,9 +156,7 @@ export default function ProductScreen({ match }) {
 
           {/* Product Detail */}
           <div className="">
-            <h2 className="py-2 px-2 text-base lg:text-xl bg-gray-800 text-base">
-              Product Description
-            </h2>
+            <h2 className="py-2 px-2 text-base lg:text-xl bg-gray-800 text-base">Product Description</h2>
             <div className="my-2 px-1 text-sm">{product.description}</div>
           </div>
 
@@ -183,15 +169,13 @@ export default function ProductScreen({ match }) {
                   <ShoppingCartIcon />
                   <h6>
                     Cart
-                    <span className="absolute -top-1.5 -right-1.5 rounded-full bg-yellow-500 w-4 text-center font-semibold ">
-                      {cartItems.length}
-                    </span>
+                    <span className="absolute -top-1.5 -right-1.5 rounded-full bg-yellow-500 w-4 text-center font-semibold ">{cartItems.length}</span>
                   </h6>
                 </Link>
               </div>
               <button
                 className="h-10 bg-blue-700 mr-1 w-1/2 disabled:cursor-not-allowed disabled:opacity-75  "
-                onClick={() => dispatch(addToCart(qty, product))}
+                onClick={() => dispatch(addToCart(qty, { product: product._id, name: product.name, image: product.image, price: product.price }))}
                 disabled={product.countInStock === 0}
               >
                 <span>

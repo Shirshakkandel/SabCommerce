@@ -4,7 +4,7 @@ import colors from 'colors'
 import morgan from 'morgan'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
-import swaggerJsDoc from 'swagger-jsdoc'
+import swaggerJsdoc from 'swagger-jsdoc'
 import compression from 'compression'
 
 import connectDB from './config/db.js'
@@ -21,26 +21,39 @@ app.use(compression())
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
-app.use(express.json())
 
-const swaggerOptions = {
-  swaggerDefinition: {
+app.use(express.json())
+const options = {
+  definition: {
+    openapi: '3.0.0',
     info: {
-      title: 'Shirshak Sab commerce Api',
-      description: 'Backend Api Information',
-      contact: { name: 'Shirshak kandel' },
-      servers: ['https://localhost:5000'],
+      title: 'Hello World',
+      version: '1.0.0',
     },
   },
-  apis: ['server.js'],
+  apis: ['./src/routes*.js'], // files containing annotations as above
 }
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions)
+const openapiSpecification = swaggerJsdoc(options)
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification))
 app.use('/api/users', userRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/orders', orderRoutes)
+app.get('/api/config/paypal', (req, res) => res.send(process.env.PAYPAL_CLIENT_ID))
+
+/**
+ * @openapi
+ * /customer:
+ *   get:
+ *     description: Welcome to swagger-jsdoc!
+ *     responses:
+ *       200:
+ *         description: Returns a mysterious string.
+ */
+app.get('/customer', (req, res) => {
+  res.send('Hello World!')
+})
 
 const __dirname = path.resolve()
 

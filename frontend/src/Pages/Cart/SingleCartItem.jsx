@@ -9,7 +9,7 @@ import RemoveIcon from '@material-ui/icons/Remove'
 
 import { addToCart, removeFromCart } from '../../store/action/cartActions'
 
-export default function SingleCartItem({ _id, name, image, price, countInStock, qty }) {
+export default function SingleCartItem({ product, name, image, price, countInStock, qty }) {
   const [subDisable, setSubDisable] = useState(false)
   const [addDisable, setAddDisable] = useState(false)
   const dispatch = useDispatch()
@@ -28,7 +28,8 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
   }, [qty, countInStock])
 
   function handleQty(direction) {
-    const item = { _id, name, image, price, countInStock, qty }
+    const item = { product, name, image, price, countInStock, qty }
+    console.log(item)
     if (direction === 'sub') {
       if (qty <= 1) {
         qty = 1
@@ -50,7 +51,7 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
       {/* Image */}
       <div className="">
         <div className="relative overflow-hidden block">
-          <Link to={`/product/${_id}`}>
+          <Link to={`/product/${product}`}>
             <img
               src={image}
               alt={`${name} cart Items`}
@@ -81,11 +82,7 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
               <RemoveIcon />
             </button>
 
-            <input
-              type="text"
-              className="w-8 lg:w-16 text-center border-r border-secondary"
-              value={qty}
-            />
+            <input type="text" className="w-8 lg:w-16 text-center border-r border-secondary" value={qty} />
 
             <button
               onClick={() => handleQty('add')}
@@ -97,9 +94,7 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
           </div>
         </div>
         {/* Qty End */}
-        {countInStock <= 5 && (
-          <p className="text-red-500 text-xs">Only {countInStock} items in stock</p>
-        )}
+        {countInStock <= 5 && <p className="text-red-500 text-xs">Only {countInStock} items in stock</p>}
         <div className="flex space-x-2 lg:text-lg font-semibold pt-0.5">
           <p className="">Price : </p>
           <p>Rs.{numberWithCommas(price)}</p>
@@ -119,7 +114,7 @@ export default function SingleCartItem({ _id, name, image, price, countInStock, 
 
         <div
           onClick={() => {
-            dispatch(removeFromCart(_id))
+            dispatch(removeFromCart(product))
           }}
           className="my-auto w-1/2 hover:text-red-500 text-center focus:outline-none "
           tabIndex="0"

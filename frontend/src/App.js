@@ -10,6 +10,7 @@ import CartPage from './Pages/Cart/CartPage'
 import ShippingScreen from './Pages/Checkout/ShippingScreen'
 import SelectPayment from './Pages/Checkout/SelectPayment'
 import OrderScreen from './Pages/Order/OrderScreen'
+import Container from './Components/Container'
 
 export default function App() {
   return (
@@ -26,7 +27,9 @@ export default function App() {
         <Route path="/cart" component={CartPage} />
         <Route path="/shipping" component={ShippingScreen} />
         <Route path="/payment" component={SelectPayment} />
-        <Route path="/order/:id" component={OrderScreen} />
+        <Container>
+          <Route path="/order/:id" component={OrderScreen} />
+        </Container>
       </Switch>
       <Footer />
       <ButtomNavigation />

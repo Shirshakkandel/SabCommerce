@@ -1,8 +1,6 @@
-
         #   1)Get Order by Id Endpoint    
-
+        
 controller/orderController.js
-
 //desc Get order by Id
 //@route Get /api/orders/:id
 //@access Private
@@ -70,7 +68,6 @@ import {getOrderDetails} from '../actions/orderActions'
 
             # 4)Update To EndPoints  
 
-
 # controller/orderController.js
 
 //@desc Update order to paid
@@ -114,7 +111,6 @@ export const orderPayReducer = (state={}, action)=> {
 
         case ORDER_PAY_RESET:
         return {}
-
     }
 }
 
@@ -132,7 +128,7 @@ export const payOrder= (orderId, paymentResult)=> async(dispatch, getState)=> {
 }
 
 
-                # 6)Adding paypal Payments  
+                         # 6)Adding paypal Payments  
 developer paypal >> SANDBOX(ACCOUNT) >>Business and personal
 
 Dashboard> My App and Credentials >> Sanbox(**)+Live >>App name(proshop) >>create App and get Client Id
@@ -144,22 +140,22 @@ PAYPAL_CLIENT_ID = aJFLAFJL;JDF;LKSDJFL;SDFJ
 app.get('/api/config/paypal', (req,res)=> res.send(process.env.PAYPAL_CLIENT_ID))
 
 
-# screen/orderScreen.js
+                        # screen/orderScreen.js
 import {PaypalButton} from 'react-paypal-button-v2'
 import {getOrderDetails,payOrder} from '../actions/orderActions'
 const OrderScreen=({match})=>{}
 const [sdkReady, setSdkReady] = useState(false)
 
 const orderDetails = useSelector(state=> state.orderDetails)
-const {order,loading,error}= orderDetails
+const {order,loading,error} = orderDetails
 
 const orderPay= useSelector(state=> state.orderPay)
 const {loading:loadingPay,success:successPay}= orderPay
+
 # paypal order script
 useEffect(()=> {
     const addPaypalScript= async()=> {
-      
-        const {data:clientId} =await axios.get('/api/config/paypal')
+        const {data:clientId} = await axios.get('/api/config/paypal')
         #   console.log(clientId) 
         const script =document.createElement('script')
         script.type="text/javascipt"
@@ -183,14 +179,14 @@ useEffect(()=> {
 const successPaymentHandler = (paymentResult) => {
     console.log(paymentResult)
     dispatch(payOrder(orderId, paymentResult))
-
 }
+
 return (
     <ListGroup.Item>
     {!order.isPaid && (
         <ListGroup.Item>
         {loadinPay && <Loader>}
-        {!sdkReady ? (<Loader/>):(<PaypalButton amount={order.totalPrice} onSuccess={sucessPaymentHandler/>)}
+        {!sdkReady ? (<Loader/>):(<PaypalButton amount={order.totalPrice} onSuccess={successPaymentHandler}/>)}
         </ListGroup.Item>
     )}
     </ListGroup.Item>

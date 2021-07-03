@@ -28,16 +28,7 @@ const authUser = asyncHandler(async (req, res) => {
 //@route POST /api/users/register
 //@acess Public
 
-/**
- * @swagger
- * /books:
- *  post:
- *    description:Register new user
- *     responses:
- *       200:
- *         description:Success
- *
- */
+
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, accountType, number, password, isAdmin } = req.body
   const userExit = await User.findOne({ email })
