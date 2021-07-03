@@ -27,8 +27,6 @@ const authUser = asyncHandler(async (req, res) => {
 //desc Register user
 //@route POST /api/users/register
 //@acess Public
-
-
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, accountType, number, password, isAdmin } = req.body
   const userExit = await User.findOne({ email })
@@ -61,4 +59,13 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 })
 
-export { authUser, registerUser }
+//@desc Get all users
+//@route Get /api/users
+//@acess Private/Admin
+
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({})
+  res.json(users)
+})
+
+export { authUser, registerUser, getUsers }

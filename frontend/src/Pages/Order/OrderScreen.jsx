@@ -9,6 +9,7 @@ import Loader from '../../Components/Loader'
 import Error from '../../Components/Error'
 import { numberWithCommas } from '../../function'
 import axios from 'axios'
+import { ORDER_PAY_RESET } from '../../store/actionTypes'
 
 const OrderScreenStyle = styled.div``
 const FlexContainer = styled.div``
@@ -47,7 +48,8 @@ export default function OrderScreen({ match, history }) {
       document.body.appendChild(script)
     }
 
-    if (!order || successPay) {
+    if (!order || successPay || order._id !== orderId) {
+      dispatch({ type: ORDER_PAY_RESET })
       dispatch(getOrderDetails(orderId))
     } else if (!order.isPaid) {
       if (!window.paypal) {

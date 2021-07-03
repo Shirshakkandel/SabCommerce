@@ -2,10 +2,12 @@ import React from 'react'
 import Carousel from '../Components/Carousel'
 import TopPicks from './TopPicks'
 import { Route } from 'react-router-dom'
+import { useEffect } from 'react'
 import AllProduct from '../Components/AllProduct'
 
 export default function Home({ match }) {
   const keyword = match.params.keyword
+  useEffect(() => window.scrollTo(0, 0), [])
 
   return (
     <>
